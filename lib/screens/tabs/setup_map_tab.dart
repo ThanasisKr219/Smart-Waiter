@@ -25,14 +25,14 @@ class SetupMapTab extends StatelessWidget {
     if (spaces.isEmpty) {
       return const EmptyStateWidget(
         icon: Icons.edit_location_alt,
-        message: 'Πατήστε το + για να φτιάξετε Χώρους',
+        message: 'Press + to create spaces',
       );
     }
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         const Text(
-          'Διαχείριση Χώρων & Τραπεζιών',
+          'Manage Spaces & Tables',
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
         const SizedBox(height: 8),
@@ -43,7 +43,7 @@ class SetupMapTab extends StatelessWidget {
               title: Text(s.name,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(
-                '${tables.where((t) => t.spaceId == s.id).length} τραπέζια • ${s.hasBounds ? "Με Κλειδωμένα Όρια" : "Ελεύθερα Όρια"}',
+                '${tables.where((t) => t.spaceId == s.id).length} tables • ${s.hasBounds ? "Locked Bounds" : "Free Bounds"}',
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -55,19 +55,19 @@ class SetupMapTab extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Επεξεργασία Χώρου'),
+                          title: const Text('Edit Space'),
                           content: TextField(controller: c),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Άκυρο'),
+                              child: const Text('Cancel'),
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 onRenameSpace(s, c.text);
                                 Navigator.pop(ctx);
                               },
-                              child: const Text('Αποθήκευση'),
+                              child: const Text('Save'),
                             ),
                           ],
                         ),

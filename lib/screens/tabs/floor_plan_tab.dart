@@ -74,7 +74,7 @@ class FloorPlanTab extends StatelessWidget {
     if (spaces.isEmpty || activeSpace == null) {
       return const EmptyStateWidget(
         icon: Icons.restaurant,
-        message: 'Δεν υπάρχουν χώροι (Πηγαίνετε στο "Στήσιμο")',
+        message: 'No spaces available (go to "Map Setup")',
       );
     }
 
@@ -122,7 +122,7 @@ class FloorPlanTab extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   icon: const Icon(Icons.auto_fix_high, size: 16),
-                  label: const Text('Αυτόματο στα Τραπέζια',
+                  label: const Text('Auto-fit Tables',
                       style: TextStyle(fontSize: 12)),
                   onPressed: onAutoBoundsRequested,
                 ),
@@ -130,7 +130,7 @@ class FloorPlanTab extends StatelessWidget {
                   TextButton.icon(
                     icon: const Icon(Icons.delete_outline,
                         size: 16, color: Colors.red),
-                    label: const Text('Διαγραφή Ορίων',
+                    label: const Text('Clear Bounds',
                         style: TextStyle(fontSize: 12, color: Colors.red)),
                     onPressed: onClearBoundsRequested,
                   ),
@@ -140,7 +140,7 @@ class FloorPlanTab extends StatelessWidget {
                     foregroundColor: Colors.white,
                   ),
                   icon: const Icon(Icons.check, size: 16),
-                  label: const Text('Αποθήκευση & Κλείδωμα',
+                  label: const Text('Save & Lock',
                       style: TextStyle(fontSize: 12)),
                   onPressed: onSaveBoundsRequested,
                 ),
@@ -174,10 +174,10 @@ class FloorPlanTab extends StatelessWidget {
                 Flexible(
                   child: Text(
                     isMapEditMode
-                        ? 'Edit Mode: Σύρετε τα τραπέζια | Πατήστε για Επεξεργασία'
+                        ? 'Edit Mode: Drag tables | Tap to edit'
                         : (useLockedBounds
-                            ? 'Κλειδωμένα Όρια (${currentSpace.name}): Zoom & κίνηση εντός των ορίων • Σύρσιμο τραπεζιού = Μεταφορά/Ένωση'
-                            : 'Ελεύθερος Χάρτης: Πατήστε το εικονίδιο Crop επάνω για να ορίσετε όρια (Borders)'),
+                            ? 'Locked Bounds (${currentSpace.name}): Zoom and pan within bounds • Drag a table to transfer/merge'
+                            : 'Free Floor Plan: Tap the Crop icon above to set bounds'),
                     style: const TextStyle(fontSize: 11, color: Colors.black87),
                   ),
                 ),
@@ -324,7 +324,7 @@ class FloorPlanTab extends StatelessWidget {
                         const IgnorePointer(
                           child: EmptyStateWidget(
                             icon: Icons.table_bar,
-                            message: 'Κανένα τραπέζι στον χώρο',
+                            message: 'No tables in this space',
                           ),
                         ),
                     ],

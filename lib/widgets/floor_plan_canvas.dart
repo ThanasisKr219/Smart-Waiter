@@ -115,7 +115,7 @@ class FloorPlanCanvas extends StatelessWidget {
                     orders[master.id]?.items.isNotEmpty ?? false;
                 final String? mergeLabel = isMerged
                     ? (table.id == master.id
-                        ? '${group.length} Τρ.'
+                        ? '${group.length} Tbl.'
                         : master.name)
                     : null;
 
@@ -278,7 +278,7 @@ class FloorPlanCanvas extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Παράθυρο Χώρου: ${tWidth.round()} x ${tHeight.round()}\n(Σύρετε εδώ για μετακίνηση ή τις γωνίες για μέγεθος)',
+                      'Space window: ${tWidth.round()} x ${tHeight.round()}\n(Drag here to move or use the corners to resize)',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -290,7 +290,7 @@ class FloorPlanCanvas extends StatelessWidget {
                 ),
               ),
             ),
-            // ΓΩΝΙΑ 1: ΠΑΝΩ ΑΡΙΣΤΕΡΑ
+            // CORNER 1: TOP LEFT
             Positioned(
               left: tLeft - halfHandle,
               top: tTop - halfHandle,
@@ -311,7 +311,7 @@ class FloorPlanCanvas extends StatelessWidget {
                 child: const CropHandleWidget(),
               ),
             ),
-            // ΓΩΝΙΑ 2: ΠΑΝΩ ΔΕΞΙΑ
+            // CORNER 2: TOP RIGHT
             Positioned(
               left: tLeft + tWidth - halfHandle,
               top: tTop - halfHandle,
@@ -331,7 +331,7 @@ class FloorPlanCanvas extends StatelessWidget {
                 child: const CropHandleWidget(),
               ),
             ),
-            // ΓΩΝΙΑ 3: ΚΑΤΩ ΑΡΙΣΤΕΡΑ
+            // CORNER 3: BOTTOM LEFT
             Positioned(
               left: tLeft - halfHandle,
               top: tTop + tHeight - halfHandle,
@@ -351,7 +351,7 @@ class FloorPlanCanvas extends StatelessWidget {
                 child: const CropHandleWidget(),
               ),
             ),
-            // ΓΩΝΙΑ 4: ΚΑΤΩ ΔΕΞΙΑ
+            // CORNER 4: BOTTOM RIGHT
             Positioned(
               left: tLeft + tWidth - halfHandle,
               top: tTop + tHeight - halfHandle,

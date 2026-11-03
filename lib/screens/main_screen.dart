@@ -93,7 +93,7 @@ class _MainScreenState extends State<MainScreen> {
     return idx == -1 ? null : spaces[idx];
   }
 
-  // --- ΟΡΙΑ ΧΑΡΤΗ (CUSTOM BORDERS & CAMERA LOCK) ---
+  // --- MAP BOUNDS (CUSTOM BORDERS & CAMERA LOCK) ---
 
   Rect _calculateAutoBoundsForSpace(String spaceId) {
     final spaceTables = tables.where((t) => t.spaceId == spaceId).toList();
@@ -200,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Τα όρια αποθηκεύτηκαν και η κάμερα κλείδωσε στον χώρο!'),
+        content: Text('Bounds saved and the camera is locked to the space!'),
         backgroundColor: Colors.teal,
       ),
     );
@@ -222,7 +222,7 @@ class _MainScreenState extends State<MainScreen> {
     _saveData();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Τα όρια του χώρου αφαιρέθηκαν.')),
+      const SnackBar(content: Text('Space bounds removed.')),
     );
   }
 
@@ -239,7 +239,7 @@ class _MainScreenState extends State<MainScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Σύρετε τις γωνίες για να ορίσετε τα όρια του χώρου και πατήστε Αποθήκευση!'),
+              'Drag the corners to set the space bounds and press Save!'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -270,7 +270,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // --- ΕΝΩΜΕΝΑ ΤΡΑΠΕΖΙΑ (MERGE) & ΑΣΦΑΛΕΙΑ ΔΕΔΟΜΕΝΩΝ ---
+  // --- MERGED TABLES & DATA SAFETY ---
 
   TableModel _getMasterTable(TableModel t) {
     if (t.masterTableId == null) return t;
@@ -346,7 +346,7 @@ class _MainScreenState extends State<MainScreen> {
     _saveData();
   }
 
-  // --- ΦΟΡΤΩΣΗ & ΑΠΟΘΗΚΕΥΣΗ ---
+  // --- LOADING & SAVING ---
 
   Future<void> _loadData() async {
     final loaded = await StorageService.loadData();
@@ -384,7 +384,7 @@ class _MainScreenState extends State<MainScreen> {
         isBoundsLocked = _activeSpace?.hasBounds ?? false;
       });
     } else {
-      final firstSpace = Space(id: uuid.v4(), name: 'Κεντρικός Χώρος');
+      final firstSpace = Space(id: uuid.v4(), name: 'Main Area');
       setState(() {
         spaces.add(firstSpace);
         activeSpaceId = firstSpace.id;
@@ -410,7 +410,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // --- ΕΝΕΡΓΕΙΕΣ ΧΑΡΤΗ & ΠΑΡΑΓΓΕΛΙΩΝ ---
+  // --- MAP & ORDER ACTIONS ---
 
   bool _checkCollision(
       String tableId, double left, double top, double scale, String spaceId) {
@@ -497,7 +497,7 @@ class _MainScreenState extends State<MainScreen> {
             _getMergedGroup(masterTarget).map((e) => e.name).join(' + ');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ενώθηκαν: $groupNames'),
+            content: Text('Merged: $groupNames'),
             backgroundColor: Colors.teal,
           ),
         );
@@ -569,7 +569,7 @@ class _MainScreenState extends State<MainScreen> {
                     id: uuid.v4(),
                     time: DateTime.now(),
                     tableName: displayTableName,
-                    type: isFullPayment ? 'Ολική' : 'Μερική',
+                    type: isFullPayment ? 'Full' : 'Partial',
                     amount: paidAmount,
                     items: paidItems,
                   ),
@@ -640,7 +640,7 @@ class _MainScreenState extends State<MainScreen> {
             TableModel(
               id: uuid.v4(),
               name: rawTableName.trim().isEmpty
-                  ? 'Τ$countInSpace'
+                  ? 'T$countInSpace'
                   : rawTableName.trim(),
               colorValue: colorVal,
               top: spawnY.clamp(8.0, virtualCanvasHeight - 80.0),
@@ -847,16 +847,16 @@ class _MainScreenState extends State<MainScreen> {
           fit: BoxFit.scaleDown,
           child: Text(
             _currentIndex == 0
-                ? 'Χάρτης'
+                ? 'Floor Plan'
                 : _currentIndex == 1
-                    ? 'Κατάλογος'
+                    ? 'Catalog'
                     : _currentIndex == 2
-                        ? 'Στήσιμο'
+                        ? 'Map Setup'
                         : _currentIndex == 3
-                            ? 'Μενού'
+                            ? 'Menu Setup'
                             : _currentIndex == 4
-                                ? 'Ταμείο'
-                                : 'Σημειώσεις',
+                                ? 'Cash Register'
+                                : 'Notes',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
@@ -870,7 +870,7 @@ class _MainScreenState extends State<MainScreen> {
                     : (hasSpaceBounds ? Colors.teal : Colors.blueGrey),
                 size: 24,
               ),
-              tooltip: 'Ορισμός Ορίων Χάρτη (Borders)',
+              tooltip: 'Set Floor Plan Bounds',
               onPressed: () {
                 if (isSettingBoundsMode) {
                   setState(() => isSettingBoundsMode = false);
@@ -931,7 +931,7 @@ class _MainScreenState extends State<MainScreen> {
                 color: isMapEditMode ? Colors.red : Colors.black87,
                 size: 26,
               ),
-              tooltip: 'Κλείδωμα / Ξεκλείδωμα Τραπεζιών',
+              tooltip: 'Lock / Unlock Tables',
               onPressed: () {
                 setState(() {
                   isSettingBoundsMode = false;
@@ -957,14 +957,14 @@ class _MainScreenState extends State<MainScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const ListTile(
-                          title: Text('Συγχρονισμός Wi-Fi',
+                          title: Text('Wi-Fi Sync',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18)),
                         ),
                         ListTile(
                           leading: const Icon(Icons.wifi_tethering,
                               color: Colors.blue),
-                          title: const Text('Αποστολή (Γίνε Server)'),
+                          title: const Text('Send (Become Server)'),
                           onTap: () {
                             Navigator.pop(ctx);
                             _wifiSyncService.startHostServer(
@@ -978,7 +978,7 @@ class _MainScreenState extends State<MainScreen> {
                         ListTile(
                           leading: const Icon(Icons.qr_code_scanner,
                               color: Colors.green),
-                          title: const Text('Λήψη (Σάρωση QR)'),
+                          title: const Text('Receive (Scan QR)'),
                           onTap: () {
                             Navigator.pop(ctx);
                             _wifiSyncService.scanToSync(
@@ -1025,7 +1025,7 @@ class _MainScreenState extends State<MainScreen> {
               backgroundColor: Colors.green,
               icon: const Icon(Icons.add, color: Colors.white),
               label: Text(
-                _currentIndex == 2 ? 'Νέο Τραπέζι / Χώρος' : 'Νέο Προϊόν',
+                _currentIndex == 2 ? 'New Table / Space' : 'New Product',
                 style: const TextStyle(color: Colors.white),
               ),
               onPressed: () {
@@ -1044,27 +1044,27 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(
               icon: Icon(Icons.map_outlined),
               selectedIcon: Icon(Icons.map),
-              label: 'Χάρτης'),
+              label: 'Floor Plan'),
           NavigationDestination(
               icon: Icon(Icons.menu_book_outlined),
               selectedIcon: Icon(Icons.menu_book),
-              label: 'Μενού'),
+              label: 'Catalog'),
           NavigationDestination(
               icon: Icon(Icons.edit_location_alt_outlined),
               selectedIcon: Icon(Icons.edit_location_alt),
-              label: 'Στήσιμο'),
+              label: 'Map Setup'),
           NavigationDestination(
               icon: Icon(Icons.restaurant_menu_outlined),
               selectedIcon: Icon(Icons.restaurant_menu),
-              label: 'Προϊόντα'),
+              label: 'Menu Setup'),
           NavigationDestination(
               icon: Icon(Icons.point_of_sale_outlined),
               selectedIcon: Icon(Icons.point_of_sale),
-              label: 'Ταμείο'),
+              label: 'Cash Register'),
           NavigationDestination(
               icon: Icon(Icons.note_alt_outlined),
               selectedIcon: Icon(Icons.note_alt),
-              label: 'Σημειώσεις'),
+              label: 'Notes'),
         ],
       ),
     );

@@ -18,13 +18,13 @@ class MapDialogs {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Ενωμένα Τραπέζια'),
+          title: const Text('Merged Tables'),
           content: Text(
-              'Τα τραπέζια "${sourceTable.name}" και "${targetTable.name}" είναι ήδη ενωμένα μεταξύ τους. Θέλετε να τα διαχωρίσετε;'),
+              'Tables "${sourceTable.name}" and "${targetTable.name}" are already merged. Would you like to unmerge them?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Άκυρο'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -32,12 +32,12 @@ class MapDialogs {
                 foregroundColor: Colors.white,
               ),
               icon: const Icon(Icons.link_off),
-              label: const Text('Διαχωρισμός Όλων'),
+              label: const Text('Unmerge All'),
               onPressed: () {
                 onUnmergeGroup();
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Τα τραπέζια διαχωρίστηκαν.')),
+                  const SnackBar(content: Text('Tables unmerged.')),
                 );
               },
             ),
@@ -69,7 +69,7 @@ class MapDialogs {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Επιλέξτε ενέργεια:',
+              'Select an action:',
               style: TextStyle(color: Colors.black54, fontSize: 14),
             ),
             const SizedBox(height: 16),
@@ -89,13 +89,13 @@ class MapDialogs {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '1. Μεταφορά Παραγγελίας',
+                    '1. Transfer Order',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   Text(
                     hasSourceOrder
-                        ? 'Μεταφέρει τα προϊόντα στο ${masterTarget.name} & αδειάζει το ${masterSource.name}'
-                        : 'Μη διαθέσιμο (Το ${masterSource.name} δεν έχει παραγγελία)',
+                        ? 'Transfers products to ${masterTarget.name} and clears ${masterSource.name}'
+                        : 'Unavailable (${masterSource.name} has no order)',
                     style: TextStyle(
                       fontSize: 11,
                       color: hasSourceOrder
@@ -113,7 +113,7 @@ class MapDialogs {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                              'Η παραγγελία μεταφέρθηκε: ${masterSource.name} ➔ ${masterTarget.name}'),
+                              'Order transferred: ${masterSource.name} ➔ ${masterTarget.name}'),
                         ),
                       );
                     },
@@ -133,11 +133,11 @@ class MapDialogs {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '2. Ένωση Τραπεζιών (Merge)',
+                    '2. Merge Tables',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   Text(
-                    'Ενώνει τα τραπέζια και τους λογαριασμούς τους σε έναν ενιαίο',
+                    'Merges the tables and their orders into one',
                     style: TextStyle(fontSize: 11, color: Colors.white70),
                   ),
                 ],
@@ -152,7 +152,7 @@ class MapDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Ακύρωση'),
+            child: const Text('Cancel'),
           ),
         ],
       ),
@@ -175,7 +175,7 @@ class MapDialogs {
       builder: (ctx) => StatefulBuilder(
         builder: (context, setSubState) {
           return AlertDialog(
-            title: const Text('Επεξεργασία Τραπεζιού'),
+            title: const Text('Edit Table'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -186,24 +186,24 @@ class MapDialogs {
                   TextField(
                     controller: nameC,
                     decoration: const InputDecoration(
-                      labelText: 'Όνομα',
+                      labelText: 'Name',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Μέγεθος:'),
+                  const Text('Size:'),
                   SegmentedButton<double>(
                     segments: const [
-                      ButtonSegment(value: 0.8, label: Text('Μικρό')),
-                      ButtonSegment(value: 1.0, label: Text('Κανονικό')),
-                      ButtonSegment(value: 1.3, label: Text('Μεγάλο')),
+                      ButtonSegment(value: 0.8, label: Text('Small')),
+                      ButtonSegment(value: 1.0, label: Text('Normal')),
+                      ButtonSegment(value: 1.3, label: Text('Large')),
                     ],
                     selected: {tempScale},
                     onSelectionChanged: (val) =>
                         setSubState(() => tempScale = val.first),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Χρώμα:'),
+                  const Text('Color:'),
                   Wrap(
                     spacing: 8,
                     children: [
@@ -238,14 +238,14 @@ class MapDialogs {
                   Navigator.pop(ctx);
                 },
                 child:
-                    const Text('Διαγραφή', style: TextStyle(color: Colors.red)),
+                    const Text('Delete', style: TextStyle(color: Colors.red)),
               ),
               ElevatedButton(
                 onPressed: () {
                   onSave(nameC.text, tempScale, tempColor);
                   Navigator.pop(ctx);
                 },
-                child: const Text('Αποθήκευση'),
+                child: const Text('Save'),
               ),
             ],
           );
@@ -287,7 +287,7 @@ class MapDialogs {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Προσθήκη στον Χάρτη',
+              const Text('Add to Floor Plan',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               Row(
@@ -296,7 +296,7 @@ class MapDialogs {
                     child: TextField(
                       controller: spaceNameCtrl,
                       decoration: const InputDecoration(
-                        hintText: 'Νέος Χώρος',
+                        hintText: 'New Space',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -310,7 +310,7 @@ class MapDialogs {
                         Navigator.pop(ctx);
                       }
                     },
-                    child: const Text('Χώρος'),
+                    child: const Text('Space'),
                   ),
                 ],
               ),
@@ -328,7 +328,7 @@ class MapDialogs {
                     setModalState(() {});
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Επιλογή Χώρου',
+                    labelText: 'Select Space',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -336,7 +336,7 @@ class MapDialogs {
                 TextField(
                   controller: tableNameCtrl,
                   decoration: const InputDecoration(
-                    labelText: 'Όνομα Τραπεζιού',
+                    labelText: 'Table Name',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -385,7 +385,7 @@ class MapDialogs {
                       tableNameCtrl.clear();
                       Navigator.pop(ctx);
                     },
-                    child: const Text('Προσθήκη Τραπεζιού'),
+                    child: const Text('Add Table'),
                   ),
                 ),
               ],
@@ -428,7 +428,7 @@ class MapDialogs {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Προσθήκη στο Μενού',
+              const Text('Add to Menu',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               Row(
@@ -437,7 +437,7 @@ class MapDialogs {
                     child: TextField(
                       controller: catNameCtrl,
                       decoration: const InputDecoration(
-                        hintText: 'Νέα Κατηγορία',
+                        hintText: 'New Category',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -451,7 +451,7 @@ class MapDialogs {
                         Navigator.pop(ctx);
                       }
                     },
-                    child: const Text('Κατηγορία'),
+                    child: const Text('Category'),
                   ),
                 ],
               ),
@@ -469,7 +469,7 @@ class MapDialogs {
                     setModalState(() {});
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Επιλογή Κατηγορίας',
+                    labelText: 'Select Category',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -477,7 +477,7 @@ class MapDialogs {
                 TextField(
                   controller: prodNameCtrl,
                   decoration: const InputDecoration(
-                    labelText: 'Όνομα Προϊόντος',
+                    labelText: 'Product Name',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -487,7 +487,7 @@ class MapDialogs {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
-                    labelText: 'Τιμή (€)',
+                    labelText: 'Price (€)',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -515,7 +515,7 @@ class MapDialogs {
                       prodPriceCtrl.clear();
                       Navigator.pop(ctx);
                     },
-                    child: const Text('Προσθήκη Προϊόντος'),
+                    child: const Text('Add Product'),
                   ),
                 ),
               ],

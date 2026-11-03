@@ -20,7 +20,7 @@ class NotepadTab extends StatelessWidget {
         expands: true,
         textAlignVertical: TextAlignVertical.top,
         decoration: InputDecoration(
-          hintText: 'Γράψτε εδώ ελεύθερα...',
+          hintText: 'Write freely here...',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
           fillColor: Colors.yellow.shade50,

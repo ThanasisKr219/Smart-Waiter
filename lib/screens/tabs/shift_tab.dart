@@ -62,7 +62,7 @@ class ShiftTab extends StatelessWidget {
                   const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
               child: Column(
                 children: [
-                  const Text('ΣΥΝΟΛΙΚΟΣ ΤΖΙΡΟΣ ΒΑΡΔΙΑΣ',
+                  const Text('TOTAL SHIFT SALES',
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.white70,
@@ -79,14 +79,14 @@ class ShiftTab extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _statBoxPremium(Icons.point_of_sale, 'Συναλλαγές',
+                      _statBoxPremium(Icons.point_of_sale, 'Transactions',
                           '$shiftTransactionsCount'),
                       _statBoxPremium(
-                          Icons.table_bar, 'Τραπέζια', '$shiftClosedTables'),
+                          Icons.table_bar, 'Tables', '$shiftClosedTables'),
                       _statBoxPremium(
-                          Icons.local_cafe, 'Προϊόντα', '$shiftTotalItems'),
+                          Icons.local_cafe, 'Products', '$shiftTotalItems'),
                       _statBoxPremium(
-                          Icons.analytics, 'Μ.Ο', '${avg.toStringAsFixed(1)}€'),
+                          Icons.analytics, 'Average', '${avg.toStringAsFixed(1)}€'),
                     ],
                   ),
                 ],
@@ -96,7 +96,7 @@ class ShiftTab extends StatelessWidget {
           const SizedBox(height: 16),
           const Align(
             alignment: Alignment.centerLeft,
-            child: Text('   Ιστορικό Παραγγελιών',
+            child: Text('   Order History',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -105,7 +105,7 @@ class ShiftTab extends StatelessWidget {
           Expanded(
             child: shiftLog.isEmpty
                 ? const EmptyStateWidget(
-                    icon: Icons.receipt_long, message: 'Καμία Συναλλαγή')
+                    icon: Icons.receipt_long, message: 'No transactions')
                 : ListView.builder(
                     itemCount: shiftLog.length,
                     itemBuilder: (context, i) {
@@ -118,7 +118,7 @@ class ShiftTab extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: log.type == 'Ολική'
+                              color: (log.type == 'Full' || log.type == 'Ολική')
                                   ? Colors.green
                                   : Colors.orange,
                               borderRadius: BorderRadius.circular(12),
@@ -178,7 +178,7 @@ class ShiftTab extends StatelessWidget {
               height: 55,
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.print),
-                label: const Text('Κλείσιμο Βάρδιας (Μηδενισμός Ζ)',
+                label: const Text('Close Shift (Reset Z)',
                     style: TextStyle(fontSize: 16)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -190,12 +190,12 @@ class ShiftTab extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: const Text('Λήξη Βάρδιας'),
-                      content: const Text('Σίγουρα θέλετε να μηδενίσετε;'),
+                      title: const Text('Close Shift'),
+                      content: const Text('Are you sure you want to reset it?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Άκυρο'),
+                          child: const Text('Cancel'),
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -205,7 +205,7 @@ class ShiftTab extends StatelessWidget {
                             onResetShift();
                             Navigator.pop(ctx);
                           },
-                          child: const Text('Μηδενισμός'),
+                          child: const Text('Reset'),
                         ),
                       ],
                     ),

@@ -124,7 +124,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('$titleNames - Παραγγελία'),
+        title: Text('$titleNames - Order'),
         actions: [
           if (isMerged)
             Padding(
@@ -135,7 +135,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   foregroundColor: Colors.teal.shade900,
                 ),
                 icon: const Icon(Icons.link_off, size: 18),
-                label: const Text('Διαχωρισμός',
+                label: const Text('Unmerge',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 onPressed: () => _openUnmergeModal(mergedGroup),
@@ -150,7 +150,7 @@ class _OrderScreenState extends State<OrderScreen> {
             child: TextField(
               controller: _tableNoteCtrl,
               decoration: InputDecoration(
-                hintText: 'Σχόλιο τραπεζιού... (π.χ. Κέρασμα)',
+                hintText: 'Table note... (e.g. Complimentary)',
                 prefixIcon: const Icon(Icons.note_alt_outlined, size: 20),
                 isDense: true,
                 border:
@@ -167,7 +167,7 @@ class _OrderScreenState extends State<OrderScreen> {
             child: TextField(
               controller: _searchCtrl,
               decoration: InputDecoration(
-                hintText: 'Έξυπνη Αναζήτηση (π.χ. φρεντο, εσπρ, capucino)...',
+                hintText: 'Smart Search (e.g. freddo, espresso, cappuccino)...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
@@ -196,7 +196,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       children: [
                         Icon(Icons.fastfood,
                             size: 60, color: Colors.grey.shade300),
-                        const Text('Ο κατάλογος είναι άδειος',
+                        const Text('The catalog is empty',
                             style: TextStyle(color: Colors.grey))
                       ],
                     ),
@@ -231,7 +231,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w600)),
                                   subtitle: const Text(
-                                      'Απλό πάτημα = +1 | Παρατεταμένο = Ποσότητα & Σχόλιο',
+                                      'Tap = +1 | Long press = Quantity & Note',
                                       style: TextStyle(fontSize: 10)),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -246,7 +246,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                       IconButton(
                                         icon: const Icon(Icons.edit_note,
                                             color: Colors.blueGrey, size: 20),
-                                        tooltip: 'Ποσότητα & Σχόλιο',
+                                        tooltip: 'Quantity & Note',
                                         onPressed: () =>
                                             _openEditProductDialog(item),
                                       ),
@@ -286,7 +286,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       children: [
                         Icon(Icons.receipt,
                             size: 50, color: Colors.grey.shade300),
-                        const Text('Το τραπέζι δεν έχει παραγγελία.',
+                        const Text('This table has no order.',
                             style: TextStyle(color: Colors.grey))
                       ],
                     ),
@@ -361,7 +361,7 @@ class _OrderScreenState extends State<OrderScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text('Σύνολο: ${total.toStringAsFixed(2)} €',
+                    child: Text('Total: ${total.toStringAsFixed(2)} €',
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
@@ -373,7 +373,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: total == 0 ? null : _openPartialPaymentDialog,
-                    child: const Text('Μερική'),
+                    child: const Text('Partial'),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
@@ -391,16 +391,16 @@ class _OrderScreenState extends State<OrderScreen> {
                             showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
-                                title: const Text('Ολική Εξόφληση;'),
+                                title: const Text('Full Payment?'),
                                 content: Text(
                                   isMerged
-                                      ? 'Σύνολο: ${total.toStringAsFixed(2)}€\n(Θα καταγραφούν ${mergedGroup.length} εξυπηρετημένα τραπέζια και θα αποδεσμευτούν αυτόματα)'
-                                      : 'Σύνολο: ${total.toStringAsFixed(2)}€',
+                                      ? 'Total: ${total.toStringAsFixed(2)}€\n(${mergedGroup.length} served tables will be recorded and automatically unmerged)'
+                                      : 'Total: ${total.toStringAsFixed(2)}€',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(ctx),
-                                    child: const Text('Άκυρο'),
+                                    child: const Text('Cancel'),
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -420,13 +420,13 @@ class _OrderScreenState extends State<OrderScreen> {
                                       Navigator.pop(ctx);
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Εξόφληση'),
+                                    child: const Text('Payment'),
                                   ),
                                 ],
                               ),
                             );
                           },
-                    child: const Text('Ολική Εξόφληση'),
+                    child: const Text('Full Payment'),
                   ),
                 ],
               ),

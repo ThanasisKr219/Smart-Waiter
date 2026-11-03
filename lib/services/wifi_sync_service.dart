@@ -24,7 +24,7 @@ class WifiSyncService {
   }) async {
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ανοίξτε το Android για να γίνετε Host.')),
+        const SnackBar(content: Text('Open Android to become the host.')),
       );
       return;
     }
@@ -37,7 +37,7 @@ class WifiSyncService {
 
     try {
       final ip = await NetworkInfo().getWifiIP();
-      if (ip == null || ip.isEmpty) throw Exception('Συνδεθείτε στο Wi-Fi!');
+      if (ip == null || ip.isEmpty) throw Exception('Connect to Wi-Fi!');
 
       await _server?.close(force: true);
       _server = await io.HttpServer.bind(
@@ -66,12 +66,12 @@ class WifiSyncService {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Ο Server ξεκίνησε!'),
+          title: const Text('Server started!'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Σκανάρετε το QR από τα άλλα κινητά.\n(Μεταφέρονται Χώροι, Όρια Χάρτη, Τραπέζια & Μενού)',
+                'Scan the QR code from the other phones.\n(Spaces, floor plan bounds, tables and menu will be transferred)',
               ),
               const SizedBox(height: 16),
               SizedBox(
@@ -84,7 +84,7 @@ class WifiSyncService {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Κλείσιμο'),
+              child: const Text('Close'),
             ),
           ],
         ),
@@ -93,7 +93,7 @@ class WifiSyncService {
       if (!context.mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Σφάλμα: $e')));
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -143,7 +143,7 @@ class WifiSyncService {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content:
-                  Text('Επιτυχής Συγχρονισμός Χάρτη, Ορίων & Καταλόγου!'),
+                  Text('Floor plan, bounds and catalog synced successfully!'),
             ),
           );
         }
@@ -151,7 +151,7 @@ class WifiSyncService {
         if (!context.mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Σφάλμα σύνδεσης.')));
+            .showSnackBar(const SnackBar(content: Text('Connection error.')));
       }
     }
   }

@@ -23,7 +23,7 @@ class SetupMenuTab extends StatelessWidget {
     if (menu.isEmpty) {
       return const EmptyStateWidget(
         icon: Icons.restaurant_menu,
-        message: 'Πατήστε το + για προσθήκη Καταλόγου',
+        message: 'Press + to add a catalog',
       );
     }
     return ListView(
@@ -45,19 +45,19 @@ class SetupMenuTab extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Επεξεργασία Κατηγορίας'),
+                          title: const Text('Edit Category'),
                           content: TextField(controller: c),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Άκυρο'),
+                              child: const Text('Cancel'),
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 onRenameCategory(cat, c.text);
                                 Navigator.pop(ctx);
                               },
-                              child: const Text('Αποθήκευση'),
+                              child: const Text('Save'),
                             ),
                           ],
                         ),
@@ -88,28 +88,28 @@ class SetupMenuTab extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text('Επεξεργασία Προϊόντος'),
+                              title: const Text('Edit Product'),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   TextField(
                                     controller: nc,
                                     decoration: const InputDecoration(
-                                        labelText: 'Όνομα'),
+                                        labelText: 'Name'),
                                   ),
                                   TextField(
                                     controller: pc,
                                     keyboardType: const TextInputType
                                         .numberWithOptions(decimal: true),
                                     decoration: const InputDecoration(
-                                        labelText: 'Τιμή (€)'),
+                                        labelText: 'Price (€)'),
                                   ),
                                 ],
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Άκυρο'),
+                                  child: const Text('Cancel'),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
@@ -119,7 +119,7 @@ class SetupMenuTab extends StatelessWidget {
                                     onEditProduct(p, nc.text, newPrice);
                                     Navigator.pop(ctx);
                                   },
-                                  child: const Text('Αποθήκευση'),
+                                  child: const Text('Save'),
                                 ),
                               ],
                             ),

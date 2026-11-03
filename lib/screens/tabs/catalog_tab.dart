@@ -11,7 +11,7 @@ class CatalogTab extends StatelessWidget {
   Widget build(BuildContext context) {
     if (menu.isEmpty) {
       return const EmptyStateWidget(
-          icon: Icons.menu_book, message: 'Ο Κατάλογος είναι άδειος');
+          icon: Icons.menu_book, message: 'The catalog is empty');
     }
     return ListView.builder(
       padding: const EdgeInsets.all(12),
@@ -30,7 +30,7 @@ class CatalogTab extends StatelessWidget {
                         fontSize: 18, fontWeight: FontWeight.bold)),
                 const Divider(),
                 if (cat.items.isEmpty)
-                  const Text('Δεν υπάρχουν προϊόντα',
+                  const Text('No products available',
                       style: TextStyle(color: Colors.grey)),
                 for (final item in cat.items)
                   Padding(

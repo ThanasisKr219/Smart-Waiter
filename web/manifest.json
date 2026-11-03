@@ -1,6 +1,6 @@
 {
-    "name": "waiter_app",
-    "short_name": "waiter_app",
+    "name": "Smart Waiter",
+    "short_name": "Smart Waiter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

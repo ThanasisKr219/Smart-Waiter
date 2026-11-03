@@ -27,7 +27,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Λήψη Δεδομένων (Wi-Fi)')),
+      appBar: AppBar(title: const Text('Receive Data (Wi-Fi)')),
       body: MobileScanner(
         controller: cameraController,
         onDetect: (capture) async {

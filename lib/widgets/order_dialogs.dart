@@ -39,7 +39,7 @@ class OrderDialogs {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Ποσότητα:',
+                          'Quantity:',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
                         ),
@@ -78,7 +78,7 @@ class OrderDialogs {
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(
-                      labelText: 'Τιμή Μονάδας (€)',
+                      labelText: 'Unit Price (€)',
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
@@ -88,7 +88,7 @@ class OrderDialogs {
                     controller: noteCtrl,
                     autofocus: true,
                     decoration: const InputDecoration(
-                      labelText: 'Σχόλιο (π.χ. Μέτριος, χωρίς πάγο)',
+                      labelText: 'Note (e.g. Medium, no ice)',
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
@@ -99,7 +99,7 @@ class OrderDialogs {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Άκυρο'),
+                child: const Text('Cancel'),
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
@@ -107,7 +107,7 @@ class OrderDialogs {
                   foregroundColor: Colors.white,
                 ),
                 icon: const Icon(Icons.add),
-                label: Text('Προσθήκη ($selectedQty)'),
+                label: Text('Add ($selectedQty)'),
                 onPressed: () {
                   final double parsedPrice = max(
                     0.0,
@@ -144,13 +144,13 @@ class OrderDialogs {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Διαχωρισμός Τραπεζιών'),
+        title: const Text('Unmerge Tables'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                'Τα παρακάτω τραπέζια είναι ενωμένα στον λογαριασμό του "${masterTable.name}":'),
+                'The following tables are merged into "${masterTable.name}":'),
             const SizedBox(height: 12),
             for (final t in group)
               if (t.id != masterTable.id)
@@ -163,7 +163,7 @@ class OrderDialogs {
                   trailing: TextButton.icon(
                     icon: const Icon(Icons.link_off,
                         size: 18, color: Colors.orange),
-                    label: const Text('Αποδέσμευση',
+                    label: const Text('Unmerge',
                         style: TextStyle(color: Colors.orange)),
                     onPressed: () {
                       onUnmergeSingle(t);
@@ -176,7 +176,7 @@ class OrderDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Κλείσιμο'),
+            child: const Text('Close'),
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
@@ -184,7 +184,7 @@ class OrderDialogs {
               foregroundColor: Colors.white,
             ),
             icon: const Icon(Icons.link_off),
-            label: const Text('Διαχωρισμός Όλων'),
+            label: const Text('Unmerge All'),
             onPressed: () {
               onUnmergeAll();
               Navigator.pop(ctx);
@@ -212,14 +212,14 @@ class OrderDialogs {
             selectedTotal += items[i].price * selectedQuantities[i];
           }
           return AlertDialog(
-            title: const Text('Μερική Εξόφληση'),
+            title: const Text('Partial Payment'),
             content: Container(
               width: double.maxFinite,
               constraints: const BoxConstraints(maxHeight: 340),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Επιλέξτε ποσότητες προς πληρωμή:',
+                  const Text('Select quantities to pay:',
                       style: TextStyle(fontSize: 13, color: Colors.grey)),
                   const SizedBox(height: 8),
                   Expanded(
@@ -262,7 +262,7 @@ class OrderDialogs {
                     ),
                   ),
                   const Divider(),
-                  Text('Σύνολο Πληρωμής: ${selectedTotal.toStringAsFixed(2)}€',
+                  Text('Payment Total: ${selectedTotal.toStringAsFixed(2)}€',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16)),
                 ],
@@ -271,7 +271,7 @@ class OrderDialogs {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Άκυρο'),
+                child: const Text('Cancel'),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -283,7 +283,7 @@ class OrderDialogs {
                         onConfirmPayment(selectedQuantities, selectedTotal);
                         Navigator.pop(ctx);
                       },
-                child: const Text('Πληρωμή'),
+                child: const Text('Payment'),
               ),
             ],
           );

@@ -5,7 +5,7 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Modular-success?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
-Το **Smart Waiter Pro** είναι ένα προηγμένο, Offline-First Mobile POS (Point of Sale) και σύστημα παραγγελιοληψίας, σχεδιασμένο αποκλειστικά για τον κλάδο της εστίασης. Προσφέρει αστραπιαία ταχύτητα, πλήρη ανεξαρτησία από το internet και P2P συγχρονισμό δεδομένων μέσω τοπικού δικτύου.
+Το **Smart Waiter** είναι ένα προηγμένο, Offline-First Mobile POS (Point of Sale) και σύστημα παραγγελιοληψίας, σχεδιασμένο αποκλειστικά για τον κλάδο της εστίασης. Προσφέρει αστραπιαία ταχύτητα, πλήρη ανεξαρτησία από το internet και P2P συγχρονισμό δεδομένων μέσω τοπικού δικτύου.
 
 ## ✨ Βασικά Χαρακτηριστικά (Features)
 

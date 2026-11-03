@@ -1,4 +1,4 @@
-# 🛎️ Smart Waiter Pro
+# 🛎️ Smart Waiter
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=flat-square&logo=dart)

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/pos_models.dart';
+import '../theme/app_theme.dart';
 
 class OrderDialogs {
   static void showEditProductDialog({
@@ -32,7 +33,7 @@ class OrderDialogs {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50,
+                      color: AppColors.deepSlateNavy,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -47,7 +48,7 @@ class OrderDialogs {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove_circle_outline,
-                                  color: Colors.redAccent),
+                                  color: AppColors.coralRed),
                               onPressed: selectedQty > 1
                                   ? () => setDialogState(() => selectedQty--)
                                   : null,
@@ -63,7 +64,7 @@ class OrderDialogs {
                             ),
                             IconButton(
                               icon: const Icon(Icons.add_circle_outline,
-                                  color: Colors.green),
+                                  color: AppColors.emerald),
                               onPressed: () =>
                                   setDialogState(() => selectedQty++),
                             ),
@@ -103,8 +104,8 @@ class OrderDialogs {
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.emerald,
+                  foregroundColor: AppColors.midnightNavy,
                 ),
                 icon: const Icon(Icons.add),
                 label: Text('Add ($selectedQty)'),
@@ -157,14 +158,14 @@ class OrderDialogs {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.table_bar, color: Colors.teal),
+                  leading: const Icon(Icons.table_bar, color: AppColors.electricCyan),
                   title: Text(t.name,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   trailing: TextButton.icon(
                     icon: const Icon(Icons.link_off,
-                        size: 18, color: Colors.orange),
+                        size: 18, color: AppColors.amber),
                     label: const Text('Unmerge',
-                        style: TextStyle(color: Colors.orange)),
+                        style: TextStyle(color: AppColors.amber)),
                     onPressed: () {
                       onUnmergeSingle(t);
                       Navigator.pop(ctx);
@@ -180,8 +181,8 @@ class OrderDialogs {
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
+              backgroundColor: AppColors.coralRed,
+              foregroundColor: AppColors.frostWhite,
             ),
             icon: const Icon(Icons.link_off),
             label: const Text('Unmerge All'),
@@ -220,7 +221,7 @@ class OrderDialogs {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('Select quantities to pay:',
-                      style: TextStyle(fontSize: 13, color: Colors.grey)),
+                      style: TextStyle(fontSize: 13, color: AppColors.steelGrey)),
                   const SizedBox(height: 8),
                   Expanded(
                     child: ListView.builder(
@@ -275,8 +276,8 @@ class OrderDialogs {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white),
+                    backgroundColor: AppColors.amber,
+                    foregroundColor: AppColors.midnightNavy),
                 onPressed: selectedTotal == 0
                     ? null
                     : () {

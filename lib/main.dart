@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/main_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,14 +15,7 @@ class WaiterApp extends StatelessWidget {
     return MaterialApp(
       title: 'Swift Dash',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2C3E50),
-          primary: const Color(0xFF2C3E50),
-          secondary: const Color(0xFFE74C3C),
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.dark,
       home: const MainScreen(),
     );
   }

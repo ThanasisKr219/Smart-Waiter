@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 
 class NotepadTab extends StatelessWidget {
   final TextEditingController controller;
@@ -23,7 +24,7 @@ class NotepadTab extends StatelessWidget {
           hintText: 'Write freely here...',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.yellow.shade50,
+          fillColor: AppColors.deepSlateNavy,
         ),
         onChanged: onChanged,
       ),

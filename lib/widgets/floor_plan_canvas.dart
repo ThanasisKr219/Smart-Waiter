@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/pos_models.dart';
+import '../theme/app_theme.dart';
 import 'canvas_painters.dart';
 
 class FloorPlanCanvas extends StatefulWidget {
@@ -142,8 +143,8 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
           Positioned.fill(
             child: Container(
               color: isMapEditMode
-                  ? Colors.blue.shade50.withValues(alpha: 0.5)
-                  : Colors.white,
+                  ? AppColors.deepSlateNavy.withValues(alpha: 0.7)
+                  : AppColors.midnightNavy,
               child: CustomPaint(
                 painter: VirtualCanvasBackgroundPainter(
                   isEditMode: isMapEditMode,
@@ -163,7 +164,7 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.teal.withValues(alpha: 0.6),
+                      color: AppColors.electricCyan.withValues(alpha: 0.6),
                       width: 3.0 / totalScreenScale,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -371,9 +372,9 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                 onPanCancel: _clearDragState,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.08),
+                    color: AppColors.electricCyan.withValues(alpha: 0.08),
                     border: Border.all(
-                      color: Colors.blueAccent,
+                      color: AppColors.electricCyan,
                       width: (3.0 / totalScreenScale).clamp(2.0, 10.0),
                     ),
                   ),
@@ -384,14 +385,14 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black54,
+                      color: AppColors.steelGrey,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       'Space window: ${tWidth.round()} x ${tHeight.round()}\n(Drag here to move or use the corners to resize)',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.frostWhite,
                         fontWeight: FontWeight.bold,
                         fontSize: (12.0 / totalScreenScale).clamp(11.0, 32.0),
                       ),

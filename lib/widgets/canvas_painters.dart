@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 export 'table_circle_widget.dart';
 export 'empty_state_widget.dart';
@@ -12,8 +13,8 @@ class VirtualCanvasBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = isEditMode
-          ? Colors.blue.withValues(alpha: 0.12)
-          : Colors.grey.withValues(alpha: 0.08)
+          ? AppColors.electricCyan.withValues(alpha: 0.12)
+          : AppColors.steelGrey.withValues(alpha: 0.08)
       ..strokeWidth = 1.0;
 
     const double step = 80.0;
@@ -44,7 +45,7 @@ class CropMaskPainter extends CustomPainter {
       ..addRect(cropRect);
 
     final Paint maskPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.45)
+      ..color = AppColors.midnightNavy.withValues(alpha: 0.45)
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(path, maskPaint);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../theme/app_theme.dart';
 
 class SetupMenuTab extends StatelessWidget {
   final List<Category> menu;
@@ -39,7 +40,7 @@ class SetupMenuTab extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    icon: const Icon(Icons.edit, color: AppColors.electricCyan),
                     onPressed: () {
                       final c = TextEditingController(text: cat.name);
                       showDialog(
@@ -65,7 +66,7 @@ class SetupMenuTab extends StatelessWidget {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: const Icon(Icons.delete, color: AppColors.coralRed),
                     onPressed: () => onDeleteCategory(cat),
                   ),
                 ],
@@ -80,7 +81,7 @@ class SetupMenuTab extends StatelessWidget {
                     children: [
                       IconButton(
                         icon:
-                            const Icon(Icons.edit, color: Colors.blue, size: 20),
+                            const Icon(Icons.edit, color: AppColors.electricCyan, size: 20),
                         onPressed: () {
                           final nc = TextEditingController(text: p.name);
                           final pc = TextEditingController(
@@ -128,7 +129,7 @@ class SetupMenuTab extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete,
-                            color: Colors.red, size: 20),
+                            color: AppColors.coralRed, size: 20),
                         onPressed: () => onDeleteProduct(cat, p),
                       ),
                     ],

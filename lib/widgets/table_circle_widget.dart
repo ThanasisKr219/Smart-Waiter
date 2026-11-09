@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pos_models.dart';
+import '../theme/app_theme.dart';
 
 class TableCircleWidget extends StatelessWidget {
   final TableModel table;
@@ -24,16 +25,16 @@ class TableCircleWidget extends StatelessWidget {
     Color? borderColor;
     double borderWidth = 0.0;
     if (isHighlightedTarget) {
-      borderColor = Colors.greenAccent.shade700;
+      borderColor = AppColors.emerald;
       borderWidth = 5.0;
     } else if (hasActiveOrder && isMerged) {
-      borderColor = Colors.amber;
+      borderColor = AppColors.amber;
       borderWidth = 4.5;
     } else if (hasActiveOrder) {
-      borderColor = Colors.amber;
+      borderColor = AppColors.amber;
       borderWidth = 4.0;
     } else if (isMerged) {
-      borderColor = Colors.cyanAccent.shade700;
+      borderColor = AppColors.electricCyan;
       borderWidth = 4.0;
     }
 
@@ -46,8 +47,11 @@ class TableCircleWidget extends StatelessWidget {
         border: borderColor != null
             ? Border.all(color: borderColor, width: borderWidth)
             : null,
-        boxShadow: const [
-          BoxShadow(color: Colors.black38, blurRadius: 6, offset: Offset(0, 3))
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.midnightNavy.withValues(alpha: 0.45),
+              blurRadius: 6,
+              offset: Offset(0, 3))
         ],
       ),
       alignment: Alignment.center,
@@ -61,7 +65,7 @@ class TableCircleWidget extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.frostWhite,
               fontWeight: FontWeight.bold,
               fontSize: 12 * table.scale,
             ),
@@ -71,7 +75,7 @@ class TableCircleWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
-                color: Colors.cyan.shade900.withValues(alpha: 0.85),
+                color: AppColors.deepSlateNavy.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -79,7 +83,7 @@ class TableCircleWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.cyanAccent,
+                  color: AppColors.electricCyan,
                   fontWeight: FontWeight.bold,
                   fontSize: 9.5 * table.scale,
                 ),
@@ -99,14 +103,17 @@ class CropHandleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blueAccent,
+        color: AppColors.electricCyan,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 3),
-        boxShadow: const [
-          BoxShadow(color: Colors.black45, blurRadius: 6, offset: Offset(0, 2))
+        border: Border.all(color: AppColors.frostWhite, width: 3),
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.midnightNavy.withValues(alpha: 0.55),
+              blurRadius: 6,
+              offset: Offset(0, 2))
         ],
       ),
-      child: const Icon(Icons.open_with, color: Colors.white, size: 16),
+      child: const Icon(Icons.open_with, color: AppColors.midnightNavy, size: 16),
     );
   }
 }

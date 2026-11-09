@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../models/pos_models.dart';
 import '../services/storage_service.dart';
 import '../services/wifi_sync_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/map_dialogs.dart';
 import 'order_screen.dart';
 import 'pos_tabs.dart';
@@ -201,7 +202,7 @@ class _MainScreenState extends State<MainScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Bounds saved and the camera is locked to the space!'),
-        backgroundColor: Colors.teal,
+        backgroundColor: AppColors.emerald,
       ),
     );
   }
@@ -350,6 +351,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> _loadData() async {
     final loaded = await StorageService.loadData();
+    if (!mounted) return;
     if (loaded != null) {
       setState(() {
         spaces = loaded.spaces;
@@ -498,7 +500,7 @@ class _MainScreenState extends State<MainScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Merged: $groupNames'),
-            backgroundColor: Colors.teal,
+            backgroundColor: AppColors.emerald,
           ),
         );
       },
@@ -866,8 +868,8 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(
                 Icons.crop,
                 color: isSettingBoundsMode
-                    ? Colors.blueAccent
-                    : (hasSpaceBounds ? Colors.teal : Colors.blueGrey),
+                    ? AppColors.electricCyan
+                    : (hasSpaceBounds ? AppColors.emerald : AppColors.steelGrey),
                 size: 24,
               ),
               tooltip: 'Set Floor Plan Bounds',
@@ -888,13 +890,13 @@ class _MainScreenState extends State<MainScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: isCurrentlyLockedToBounds
-                        ? Colors.teal.shade600
-                        : Colors.grey.shade200,
+                        ? AppColors.emerald
+                        : AppColors.deepSlateNavy,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isCurrentlyLockedToBounds
-                          ? Colors.teal.shade800
-                          : Colors.grey.shade400,
+                          ? AppColors.emerald
+                          : AppColors.steelGrey,
                     ),
                   ),
                   child: Row(
@@ -905,8 +907,8 @@ class _MainScreenState extends State<MainScreen> {
                             ? Icons.center_focus_strong
                             : Icons.crop_free,
                         color: isCurrentlyLockedToBounds
-                            ? Colors.white
-                            : Colors.black87,
+                            ? AppColors.midnightNavy
+                            : AppColors.frostWhite,
                         size: 20,
                       ),
                       const SizedBox(width: 4),
@@ -916,8 +918,8 @@ class _MainScreenState extends State<MainScreen> {
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: isCurrentlyLockedToBounds
-                              ? Colors.white
-                              : Colors.black87,
+                              ? AppColors.midnightNavy
+                              : AppColors.frostWhite,
                         ),
                       ),
                     ],
@@ -928,7 +930,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(
                 isMapEditMode ? Icons.lock_open : Icons.lock,
-                color: isMapEditMode ? Colors.red : Colors.black87,
+                color: isMapEditMode ? AppColors.coralRed : AppColors.frostWhite,
                 size: 26,
               ),
               tooltip: 'Lock / Unlock Tables',
@@ -943,11 +945,11 @@ class _MainScreenState extends State<MainScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 8.0, left: 2.0),
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.sync, color: Colors.white, size: 16),
+              icon: const Icon(Icons.sync, size: 16),
               label: const Text('Sync',
-                  style: TextStyle(color: Colors.white, fontSize: 12)),
+                  style: TextStyle(fontSize: 12)),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: AppColors.amber,
                   padding: const EdgeInsets.symmetric(horizontal: 8)),
               onPressed: () {
                 showModalBottomSheet(
@@ -963,7 +965,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         ListTile(
                           leading: const Icon(Icons.wifi_tethering,
-                              color: Colors.blue),
+                              color: AppColors.electricCyan),
                           title: const Text('Send (Become Server)'),
                           onTap: () {
                             Navigator.pop(ctx);
@@ -977,7 +979,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         ListTile(
                           leading: const Icon(Icons.qr_code_scanner,
-                              color: Colors.green),
+                              color: AppColors.emerald),
                           title: const Text('Receive (Scan QR)'),
                           onTap: () {
                             Navigator.pop(ctx);
@@ -1022,11 +1024,11 @@ class _MainScreenState extends State<MainScreen> {
       body: pages[_currentIndex],
       floatingActionButton: (_currentIndex == 2 || _currentIndex == 3)
           ? FloatingActionButton.extended(
-              backgroundColor: Colors.green,
-              icon: const Icon(Icons.add, color: Colors.white),
+              backgroundColor: AppColors.electricCyan,
+              icon: const Icon(Icons.add, color: AppColors.midnightNavy),
               label: Text(
                 _currentIndex == 2 ? 'New Table / Space' : 'New Product',
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: AppColors.midnightNavy),
               ),
               onPressed: () {
                 if (_currentIndex == 2) {

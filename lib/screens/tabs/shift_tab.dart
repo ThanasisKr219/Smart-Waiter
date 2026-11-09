@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../theme/app_theme.dart';
 
 class ShiftTab extends StatelessWidget {
   final double shiftTotal;
@@ -23,16 +24,16 @@ class ShiftTab extends StatelessWidget {
   Widget _statBoxPremium(IconData icon, String label, String value) {
     return Column(
       children: [
-        Icon(icon, size: 28, color: Colors.white70),
+        Icon(icon, size: 28, color: AppColors.frostWhite),
         const SizedBox(height: 4),
         Text(
           value,
           style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.frostWhite),
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.white70),
+          style: const TextStyle(fontSize: 12, color: AppColors.frostWhite),
         ),
       ],
     );
@@ -53,7 +54,7 @@ class ShiftTab extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF2C3E50), Color(0xFF3498DB)],
+                  colors: [AppColors.deepSlateNavy, AppColors.electricCyan],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -65,7 +66,7 @@ class ShiftTab extends StatelessWidget {
                   const Text('TOTAL SHIFT SALES',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white70,
+                          color: AppColors.frostWhite,
                           letterSpacing: 1.2)),
                   const SizedBox(height: 8),
                   Text(
@@ -73,9 +74,9 @@ class ShiftTab extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                        color: AppColors.frostWhite),
                   ),
-                  const Divider(color: Colors.white24, height: 40),
+                  const Divider(color: AppColors.steelGrey, height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -100,7 +101,7 @@ class ShiftTab extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
+                    color: AppColors.frostWhite)),
           ),
           Expanded(
             child: shiftLog.isEmpty
@@ -119,14 +120,14 @@ class ShiftTab extends StatelessWidget {
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: (log.type == 'Full' || log.type == 'Ολική')
-                                  ? Colors.green
-                                  : Colors.orange,
+                                  ? AppColors.emerald
+                                  : AppColors.amber,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               log.type,
                               style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.midnightNavy,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -146,14 +147,14 @@ class ShiftTab extends StatelessWidget {
                                 '${log.amount.toStringAsFixed(2)} €',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87),
+                                    color: AppColors.frostWhite),
                               ),
                             ],
                           ),
                           children: [
                             Container(
                               padding: const EdgeInsets.all(16),
-                              color: Colors.grey.shade50,
+                              color: AppColors.deepSlateNavy,
                               width: double.infinity,
                               child: Text(
                                 log.items.map((it) {
@@ -181,8 +182,8 @@ class ShiftTab extends StatelessWidget {
                 label: const Text('Close Shift (Reset Z)',
                     style: TextStyle(fontSize: 16)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.coralRed,
+                  foregroundColor: AppColors.frostWhite,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -199,8 +200,8 @@ class ShiftTab extends StatelessWidget {
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white),
+                              backgroundColor: AppColors.coralRed,
+                              foregroundColor: AppColors.frostWhite),
                           onPressed: () {
                             onResetShift();
                             Navigator.pop(ctx);

@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,6 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   static const double minBoundSize = 260.0;
 
   int _currentIndex = 0;
+  int _setupMode = 0;
   List<Space> spaces = [];
   List<TableModel> tables = [];
   List<Category> menu = [];
@@ -750,9 +751,10 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
       CatalogTab(menu: menu),
-      SetupMapTab(
+      SetupTab(
         spaces: spaces,
         tables: tables,
+        menu: menu,
         onRenameSpace: (space, newName) {
           setState(() => space.name = newName);
           _saveData();
@@ -777,9 +779,6 @@ class _MainScreenState extends State<MainScreen> {
         },
         onEditTable: _openEditTableDialog,
         onDeleteTable: _deleteTableSafe,
-      ),
-      SetupMenuTab(
-        menu: menu,
         onRenameCategory: (cat, newName) {
           setState(() => cat.name = newName);
           _saveData();
@@ -802,6 +801,7 @@ class _MainScreenState extends State<MainScreen> {
           setState(() => cat.items.removeWhere((item) => item.id == prod.id));
           _saveData();
         },
+        onModeChanged: (mode) => setState(() => _setupMode = mode),
       ),
       ShiftTab(
         shiftTotal: shiftTotal,
@@ -843,10 +843,8 @@ class _MainScreenState extends State<MainScreen> {
                 : _currentIndex == 1
                     ? 'Catalog'
                     : _currentIndex == 2
-                        ? 'Map Setup'
+                        ? 'Setup'
                         : _currentIndex == 3
-                            ? 'Menu Setup'
-                            : _currentIndex == 4
                                 ? 'Cash Register'
                                 : 'Notes',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -1012,16 +1010,16 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       body: pages[_currentIndex],
-      floatingActionButton: (_currentIndex == 2 || _currentIndex == 3)
+      floatingActionButton: _currentIndex == 2
           ? FloatingActionButton.extended(
               backgroundColor: AppColors.electricCyan,
               icon: const Icon(Icons.add, color: AppColors.midnightNavy),
               label: Text(
-                _currentIndex == 2 ? 'New Table / Space' : 'New Product',
+                _setupMode == 0 ? 'New Table / Space' : 'New Product',
                 style: const TextStyle(color: AppColors.midnightNavy),
               ),
               onPressed: () {
-                if (_currentIndex == 2) {
+                if (_setupMode == 0) {
                   _openMapAddSheet();
                 } else {
                   _openMenuAddSheet();
@@ -1042,13 +1040,9 @@ class _MainScreenState extends State<MainScreen> {
               selectedIcon: Icon(Icons.menu_book),
               label: 'Catalog'),
           NavigationDestination(
-              icon: Icon(Icons.edit_location_alt_outlined),
-              selectedIcon: Icon(Icons.edit_location_alt),
-              label: 'Map Setup'),
-          NavigationDestination(
-              icon: Icon(Icons.restaurant_menu_outlined),
-              selectedIcon: Icon(Icons.restaurant_menu),
-              label: 'Menu Setup'),
+              icon: Icon(Icons.tune_rounded),
+              selectedIcon: Icon(Icons.tune_rounded),
+              label: 'Setup'),
           NavigationDestination(
               icon: Icon(Icons.point_of_sale_outlined),
               selectedIcon: Icon(Icons.point_of_sale),

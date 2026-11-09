@@ -71,7 +71,7 @@ class TableCircleWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
-                color: Colors.cyan.shade900.withOpacity(0.85),
+                color: Colors.cyan.shade900.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

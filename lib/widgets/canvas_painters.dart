@@ -12,8 +12,8 @@ class VirtualCanvasBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = isEditMode
-          ? Colors.blue.withOpacity(0.12)
-          : Colors.grey.withOpacity(0.08)
+          ? Colors.blue.withValues(alpha: 0.12)
+          : Colors.grey.withValues(alpha: 0.08)
       ..strokeWidth = 1.0;
 
     const double step = 80.0;
@@ -44,7 +44,7 @@ class CropMaskPainter extends CustomPainter {
       ..addRect(cropRect);
 
     final Paint maskPaint = Paint()
-      ..color = Colors.black.withOpacity(0.45)
+      ..color = Colors.black.withValues(alpha: 0.45)
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(path, maskPaint);

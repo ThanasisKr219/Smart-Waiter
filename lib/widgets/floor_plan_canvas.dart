@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../models/pos_models.dart';
 import 'canvas_painters.dart';
 
-class FloorPlanCanvas extends StatelessWidget {
+class FloorPlanCanvas extends StatefulWidget {
   final double virtualCanvasWidth;
   final double virtualCanvasHeight;
   final double minBoundSize;
@@ -19,14 +20,14 @@ class FloorPlanCanvas extends StatelessWidget {
   final TableModel Function(TableModel) getMasterTable;
   final List<TableModel> Function(TableModel) getMergedGroup;
   final bool Function(String tableId, double left, double top, double scale)
-      checkCollision;
+  checkCollision;
   final void Function(TableModel table, double newLeft, double newTop)
-      onTableMoved;
+  onTableMoved;
   final VoidCallback onTableMoveEnded;
   final void Function(TableModel) onEditTable;
   final void Function(TableModel) onOpenOrder;
   final void Function(TableModel source, TableModel target)
-      onTransferOrMergeRequested;
+  onTransferOrMergeRequested;
   final void Function(Rect newTempBounds) onTempBoundsChanged;
 
   const FloorPlanCanvas({
@@ -55,10 +56,73 @@ class FloorPlanCanvas extends StatelessWidget {
   });
 
   @override
+  State<FloorPlanCanvas> createState() => _FloorPlanCanvasState();
+}
+
+class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
+  final GlobalKey _canvasKey = GlobalKey();
+  Offset? _dragStartCanvasPos;
+  Offset? _dragStartTablePosition;
+  Rect? _dragStartBounds;
+
+  Offset _globalToCanvas(Offset globalPosition) {
+    final box = _canvasKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box != null) {
+      return box.globalToLocal(globalPosition);
+    }
+
+    final scale = widget.mapTransformCtrl.value.getMaxScaleOnAxis();
+    return Offset(globalPosition.dx / scale, globalPosition.dy / scale);
+  }
+
+  void _startTableDrag(TableModel table, DragStartDetails details) {
+    _dragStartCanvasPos = _globalToCanvas(details.globalPosition);
+    _dragStartTablePosition = Offset(table.left, table.top);
+  }
+
+  void _startBoundsDrag(DragStartDetails details) {
+    _dragStartCanvasPos = _globalToCanvas(details.globalPosition);
+    _dragStartBounds = widget.tempBounds;
+  }
+
+  Offset _canvasDragDelta(Offset globalPosition) {
+    return _globalToCanvas(globalPosition) - _dragStartCanvasPos!;
+  }
+
+  void _clearDragState() {
+    _dragStartCanvasPos = null;
+    _dragStartTablePosition = null;
+    _dragStartBounds = null;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final double currentViewerScale = mapTransformCtrl.value.getMaxScaleOnAxis();
-    final double totalScreenScale =
-        (effectiveBaseScale * currentViewerScale).clamp(0.15, 5.0);
+    final virtualCanvasWidth = widget.virtualCanvasWidth;
+    final virtualCanvasHeight = widget.virtualCanvasHeight;
+    final minBoundSize = widget.minBoundSize;
+    final currentTables = widget.currentTables;
+    final currentSpace = widget.currentSpace;
+    final orders = widget.orders;
+    final mapTransformCtrl = widget.mapTransformCtrl;
+    final effectiveBaseScale = widget.effectiveBaseScale;
+    final clampToSpaceBounds = widget.clampToSpaceBounds;
+    final isMapEditMode = widget.isMapEditMode;
+    final isSettingBoundsMode = widget.isSettingBoundsMode;
+    final tempBounds = widget.tempBounds;
+    final getMasterTable = widget.getMasterTable;
+    final getMergedGroup = widget.getMergedGroup;
+    final checkCollision = widget.checkCollision;
+    final onTableMoved = widget.onTableMoved;
+    final onTableMoveEnded = widget.onTableMoveEnded;
+    final onEditTable = widget.onEditTable;
+    final onOpenOrder = widget.onOpenOrder;
+    final onTransferOrMergeRequested = widget.onTransferOrMergeRequested;
+    final onTempBoundsChanged = widget.onTempBoundsChanged;
+
+    final double currentViewerScale = mapTransformCtrl.value
+        .getMaxScaleOnAxis();
+    final double totalScreenScale = (effectiveBaseScale * currentViewerScale)
+        .clamp(0.15, 5.0);
 
     final double handleSize = (38.0 / totalScreenScale).clamp(28.0, 140.0);
     final double halfHandle = handleSize / 2.0;
@@ -69,6 +133,7 @@ class FloorPlanCanvas extends StatelessWidget {
     final double tHeight = tempBounds.height;
 
     return SizedBox(
+      key: _canvasKey,
       width: virtualCanvasWidth,
       height: virtualCanvasHeight,
       child: Stack(
@@ -77,11 +142,12 @@ class FloorPlanCanvas extends StatelessWidget {
           Positioned.fill(
             child: Container(
               color: isMapEditMode
-                  ? Colors.blue.shade50.withOpacity(0.5)
+                  ? Colors.blue.shade50.withValues(alpha: 0.5)
                   : Colors.white,
               child: CustomPaint(
-                painter:
-                    VirtualCanvasBackgroundPainter(isEditMode: isMapEditMode),
+                painter: VirtualCanvasBackgroundPainter(
+                  isEditMode: isMapEditMode,
+                ),
               ),
             ),
           ),
@@ -97,7 +163,7 @@ class FloorPlanCanvas extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.teal.withOpacity(0.6),
+                      color: Colors.teal.withValues(alpha: 0.6),
                       width: 3.0 / totalScreenScale,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -115,8 +181,8 @@ class FloorPlanCanvas extends StatelessWidget {
                     orders[master.id]?.items.isNotEmpty ?? false;
                 final String? mergeLabel = isMerged
                     ? (table.id == master.id
-                        ? '${group.length} Tbl.'
-                        : master.name)
+                          ? '${group.length} Tbl.'
+                          : master.name)
                     : null;
 
                 final double tableDiameter = 76.0 * table.scale;
@@ -125,54 +191,85 @@ class FloorPlanCanvas extends StatelessWidget {
 
                 final double minX =
                     (clampToSpaceBounds && currentSpace.hasBounds)
-                        ? currentSpace.boundLeft! + 4.0
-                        : 8.0;
+                    ? currentSpace.boundLeft! + 4.0
+                    : 8.0;
                 final double minY =
                     (clampToSpaceBounds && currentSpace.hasBounds)
-                        ? currentSpace.boundTop! + 4.0
-                        : 8.0;
+                    ? currentSpace.boundTop! + 4.0
+                    : 8.0;
                 final double maxX =
                     (clampToSpaceBounds && currentSpace.hasBounds)
-                        ? (currentSpace.boundLeft! +
-                                currentSpace.boundWidth! -
-                                tableDiameter -
-                                4.0)
-                            .clamp(minX, virtualCanvasWidth - tableDiameter)
-                        : virtualCanvasWidth - tableDiameter;
+                    ? (currentSpace.boundLeft! +
+                              currentSpace.boundWidth! -
+                              tableDiameter -
+                              4.0)
+                          .clamp(minX, virtualCanvasWidth - tableDiameter)
+                    : virtualCanvasWidth - tableDiameter;
                 final double maxY =
                     (clampToSpaceBounds && currentSpace.hasBounds)
-                        ? (currentSpace.boundTop! +
-                                currentSpace.boundHeight! -
-                                tableDiameter -
-                                4.0)
-                            .clamp(minY, virtualCanvasHeight - tableDiameter)
-                        : virtualCanvasHeight - tableDiameter;
+                    ? (currentSpace.boundTop! +
+                              currentSpace.boundHeight! -
+                              tableDiameter -
+                              4.0)
+                          .clamp(minY, virtualCanvasHeight - tableDiameter)
+                    : virtualCanvasHeight - tableDiameter;
 
                 return Positioned(
-                  left:
-                      table.left.clamp(0.0, virtualCanvasWidth - tableDiameter),
-                  top: table.top
-                      .clamp(0.0, virtualCanvasHeight - tableDiameter),
+                  left: table.left.clamp(
+                    0.0,
+                    virtualCanvasWidth - tableDiameter,
+                  ),
+                  top: table.top.clamp(
+                    0.0,
+                    virtualCanvasHeight - tableDiameter,
+                  ),
                   child: IgnorePointer(
                     ignoring: isSettingBoundsMode,
                     child: isMapEditMode
                         ? GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () => onEditTable(table),
+                            onPanStart: (details) =>
+                                _startTableDrag(table, details),
                             onPanUpdate: (details) {
+                              final startPosition = _dragStartTablePosition;
+                              final startCanvasPosition = _dragStartCanvasPos;
+                              if (startPosition == null ||
+                                  startCanvasPosition == null) {
+                                return;
+                              }
+
+                              final canvasDelta =
+                                  _globalToCanvas(details.globalPosition) -
+                                  startCanvasPosition;
                               final double newLeft =
-                                  (table.left + details.delta.dx)
-                                      .clamp(minX, maxX);
+                                  (startPosition.dx + canvasDelta.dx).clamp(
+                                    minX,
+                                    maxX,
+                                  );
                               final double newTop =
-                                  (table.top + details.delta.dy)
-                                      .clamp(minY, maxY);
+                                  (startPosition.dy + canvasDelta.dy).clamp(
+                                    minY,
+                                    maxY,
+                                  );
 
                               if (!checkCollision(
-                                  table.id, newLeft, newTop, table.scale)) {
+                                table.id,
+                                newLeft,
+                                newTop,
+                                table.scale,
+                              )) {
                                 onTableMoved(table, newLeft, newTop);
                               }
                             },
-                            onPanEnd: (_) => onTableMoveEnded(),
+                            onPanEnd: (_) {
+                              onTableMoveEnded();
+                              _clearDragState();
+                            },
+                            onPanCancel: () {
+                              onTableMoveEnded();
+                              _clearDragState();
+                            },
                             child: TableCircleWidget(
                               table: table,
                               hasActiveOrder: hasActiveOrder,
@@ -253,17 +350,28 @@ class FloorPlanCanvas extends StatelessWidget {
               height: tHeight,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: _startBoundsDrag,
                 onPanUpdate: (details) {
-                  final newL = (tLeft + details.delta.dx)
-                      .clamp(0.0, virtualCanvasWidth - tWidth);
-                  final newT = (tTop + details.delta.dy)
-                      .clamp(0.0, virtualCanvasHeight - tHeight);
+                  final startBounds = _dragStartBounds;
+                  if (startBounds == null) return;
+                  final canvasDelta = _canvasDragDelta(details.globalPosition);
+                  final newL = (startBounds.left + canvasDelta.dx).clamp(
+                    0.0,
+                    virtualCanvasWidth - tWidth,
+                  );
+                  final newT = (startBounds.top + canvasDelta.dy).clamp(
+                    0.0,
+                    virtualCanvasHeight - tHeight,
+                  );
                   onTempBoundsChanged(
-                      Rect.fromLTWH(newL, newT, tWidth, tHeight));
+                    Rect.fromLTWH(newL, newT, tWidth, tHeight),
+                  );
                 },
+                onPanEnd: (_) => _clearDragState(),
+                onPanCancel: _clearDragState,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.08),
+                    color: Colors.blue.withValues(alpha: 0.08),
                     border: Border.all(
                       color: Colors.blueAccent,
                       width: (3.0 / totalScreenScale).clamp(2.0, 10.0),
@@ -271,8 +379,10 @@ class FloorPlanCanvas extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(12),
@@ -298,16 +408,25 @@ class FloorPlanCanvas extends StatelessWidget {
               height: handleSize,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: _startBoundsDrag,
                 onPanUpdate: (details) {
-                  final double right = tLeft + tWidth;
-                  final double bottom = tTop + tHeight;
-                  final double newL = (tLeft + details.delta.dx)
-                      .clamp(0.0, right - minBoundSize);
-                  final double newT = (tTop + details.delta.dy)
-                      .clamp(0.0, bottom - minBoundSize);
-                  onTempBoundsChanged(
-                      Rect.fromLTRB(newL, newT, right, bottom));
+                  final startBounds = _dragStartBounds;
+                  if (startBounds == null) return;
+                  final canvasDelta = _canvasDragDelta(details.globalPosition);
+                  final double right = startBounds.right;
+                  final double bottom = startBounds.bottom;
+                  final double newL = (startBounds.left + canvasDelta.dx).clamp(
+                    0.0,
+                    right - minBoundSize,
+                  );
+                  final double newT = (startBounds.top + canvasDelta.dy).clamp(
+                    0.0,
+                    bottom - minBoundSize,
+                  );
+                  onTempBoundsChanged(Rect.fromLTRB(newL, newT, right, bottom));
                 },
+                onPanEnd: (_) => _clearDragState(),
+                onPanCancel: _clearDragState,
                 child: const CropHandleWidget(),
               ),
             ),
@@ -319,15 +438,27 @@ class FloorPlanCanvas extends StatelessWidget {
               height: handleSize,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: _startBoundsDrag,
                 onPanUpdate: (details) {
-                  final double bottom = tTop + tHeight;
-                  final double newW = (tWidth + details.delta.dx)
-                      .clamp(minBoundSize, virtualCanvasWidth - tLeft);
-                  final double newT = (tTop + details.delta.dy)
-                      .clamp(0.0, bottom - minBoundSize);
+                  final startBounds = _dragStartBounds;
+                  if (startBounds == null) return;
+                  final canvasDelta = _canvasDragDelta(details.globalPosition);
+                  final double newW = (startBounds.width + canvasDelta.dx)
+                      .clamp(
+                        minBoundSize,
+                        virtualCanvasWidth - startBounds.left,
+                      );
+                  final double newT = (startBounds.top + canvasDelta.dy).clamp(
+                    0.0,
+                    startBounds.bottom - minBoundSize,
+                  );
+                  final double bottom = startBounds.bottom;
                   onTempBoundsChanged(
-                      Rect.fromLTWH(tLeft, newT, newW, bottom - newT));
+                    Rect.fromLTWH(startBounds.left, newT, newW, bottom - newT),
+                  );
                 },
+                onPanEnd: (_) => _clearDragState(),
+                onPanCancel: _clearDragState,
                 child: const CropHandleWidget(),
               ),
             ),
@@ -339,15 +470,31 @@ class FloorPlanCanvas extends StatelessWidget {
               height: handleSize,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: _startBoundsDrag,
                 onPanUpdate: (details) {
-                  final double right = tLeft + tWidth;
-                  final double newL = (tLeft + details.delta.dx)
-                      .clamp(0.0, right - minBoundSize);
-                  final double newH = (tHeight + details.delta.dy)
-                      .clamp(minBoundSize, virtualCanvasHeight - tTop);
+                  final startBounds = _dragStartBounds;
+                  if (startBounds == null) return;
+                  final canvasDelta = _canvasDragDelta(details.globalPosition);
+                  final double newL = (startBounds.left + canvasDelta.dx).clamp(
+                    0.0,
+                    startBounds.right - minBoundSize,
+                  );
+                  final double newH = (startBounds.height + canvasDelta.dy)
+                      .clamp(
+                        minBoundSize,
+                        virtualCanvasHeight - startBounds.top,
+                      );
                   onTempBoundsChanged(
-                      Rect.fromLTWH(newL, tTop, right - newL, newH));
+                    Rect.fromLTWH(
+                      newL,
+                      startBounds.top,
+                      startBounds.right - newL,
+                      newH,
+                    ),
+                  );
                 },
+                onPanEnd: (_) => _clearDragState(),
+                onPanCancel: _clearDragState,
                 child: const CropHandleWidget(),
               ),
             ),
@@ -359,14 +506,32 @@ class FloorPlanCanvas extends StatelessWidget {
               height: handleSize,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: _startBoundsDrag,
                 onPanUpdate: (details) {
-                  final double newW = (tWidth + details.delta.dx)
-                      .clamp(minBoundSize, virtualCanvasWidth - tLeft);
-                  final double newH = (tHeight + details.delta.dy)
-                      .clamp(minBoundSize, virtualCanvasHeight - tTop);
+                  final startBounds = _dragStartBounds;
+                  if (startBounds == null) return;
+                  final canvasDelta = _canvasDragDelta(details.globalPosition);
+                  final double newW = (startBounds.width + canvasDelta.dx)
+                      .clamp(
+                        minBoundSize,
+                        virtualCanvasWidth - startBounds.left,
+                      );
+                  final double newH = (startBounds.height + canvasDelta.dy)
+                      .clamp(
+                        minBoundSize,
+                        virtualCanvasHeight - startBounds.top,
+                      );
                   onTempBoundsChanged(
-                      Rect.fromLTWH(tLeft, tTop, newW, newH));
+                    Rect.fromLTWH(
+                      startBounds.left,
+                      startBounds.top,
+                      newW,
+                      newH,
+                    ),
+                  );
                 },
+                onPanEnd: (_) => _clearDragState(),
+                onPanCancel: _clearDragState,
                 child: const CropHandleWidget(),
               ),
             ),

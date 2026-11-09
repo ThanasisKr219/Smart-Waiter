@@ -4,6 +4,87 @@ import '../models/pos_models.dart';
 import '../theme/app_theme.dart';
 
 class OrderDialogs {
+  static void showEditOrderItemDialog({
+    required BuildContext context,
+    required OrderItem item,
+    required void Function(OrderItem updated) onSave,
+    required VoidCallback onDelete,
+  }) {
+    final quantityCtrl = TextEditingController(text: '${item.quantity}');
+    final priceCtrl =
+        TextEditingController(text: item.price.toStringAsFixed(2));
+    final noteCtrl = TextEditingController(text: item.note);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Edit ${item.name}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: quantityCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    labelText: 'Quantity', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: priceCtrl,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                    labelText: 'Unit Price (€)', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noteCtrl,
+                decoration: const InputDecoration(
+                    labelText: 'Note', border: OutlineInputBorder()),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              onDelete();
+              Navigator.pop(ctx);
+            },
+            style: TextButton.styleFrom(foregroundColor: AppColors.coralRed),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Delete'),
+          ),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final quantity = int.tryParse(quantityCtrl.text) ?? 0;
+              final price = double.tryParse(
+                      priceCtrl.text.trim().replaceAll(',', '.')) ??
+                  item.price;
+              if (quantity <= 0) {
+                onDelete();
+              } else {
+                onSave(OrderItem(
+                  productId: item.productId,
+                  name: item.name,
+                  price: max(0, price),
+                  quantity: quantity,
+                  note: noteCtrl.text.trim(),
+                ));
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   static void showEditProductDialog({
     required BuildContext context,
     required Product item,

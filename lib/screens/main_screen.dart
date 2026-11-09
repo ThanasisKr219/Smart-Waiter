@@ -145,8 +145,8 @@ class _MainScreenState extends State<MainScreen> {
     final double ty = (vh / 2.0) - (targetRect.center.dy * scale);
 
     _mapTransformCtrl.value = Matrix4.identity()
-      ..translate(tx, ty)
-      ..scale(scale);
+      ..translateByDouble(tx, ty, 0.0, 1.0)
+      ..scaleByDouble(scale, scale, scale, 1.0);
   }
 
   void _enterSetBoundsMode() {

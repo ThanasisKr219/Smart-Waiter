@@ -623,7 +623,7 @@ class MapDialogs {
               const Divider(height: 30),
               if (spaces.isNotEmpty) ...[
                 DropdownButtonFormField<String>(
-                  value: currentSpace,
+                  initialValue: currentSpace,
                   items: spaces
                       .map(
                         (s) =>
@@ -775,7 +775,7 @@ class MapDialogs {
               const Divider(height: 30),
               if (menu.isNotEmpty) ...[
                 DropdownButtonFormField<String>(
-                  value: currentCat,
+                  initialValue: currentCat,
                   items: menu
                       .map(
                         (c) =>

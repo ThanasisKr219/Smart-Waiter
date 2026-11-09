@@ -24,6 +24,7 @@ class WifiSyncService {
     required List<Space> Function() getSpaces,
     required List<TableModel> Function() getTables,
     required List<Category> Function() getMenu,
+    required List<OrderTicket> Function() getPendingTickets,
   }) async {
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,6 +58,8 @@ class WifiSyncService {
             'spaces': getSpaces().map((e) => e.toJson()).toList(),
             'tables': getTables().map((e) => e.toJson()).toList(),
             'menu': getMenu().map((e) => e.toJson()).toList(),
+            'pendingTickets':
+                getPendingTickets().map((e) => e.toJson()).toList(),
           };
           request.response.write(jsonEncode(map));
         }
@@ -122,6 +125,7 @@ class WifiSyncService {
       List<Space> newSpaces,
       List<TableModel> newTables,
       List<Category> newMenu,
+      List<OrderTicket> newPendingTickets,
     )
     onSyncSuccess,
   }) async {
@@ -157,9 +161,15 @@ class WifiSyncService {
           final syncedMenu = (data['menu'] as List)
               .map((e) => Category.fromJson(e))
               .toList();
-          onSyncSuccess(syncedSpaces, syncedTables, syncedMenu);
+          final syncedPendingTickets =
+              (data['pendingTickets'] as List? ?? [])
+                  .map((e) => OrderTicket.fromJson(e))
+                  .toList();
+          onSyncSuccess(
+              syncedSpaces, syncedTables, syncedMenu, syncedPendingTickets);
           return 'Synced ${syncedSpaces.length} spaces, '
-              '${syncedTables.length} tables & ${syncedMenu.length} categories';
+              '${syncedTables.length} tables, ${syncedMenu.length} categories '
+              '& ${syncedPendingTickets.length} pending tickets';
         },
       ),
     );

@@ -6,3 +6,4 @@ export 'tabs/setup_menu_tab.dart';
 export 'tabs/setup_tab.dart';
 export 'tabs/shift_tab.dart';
 export 'tabs/notepad_tab.dart';
+export 'tabs/pending_tickets_tab.dart';

@@ -14,6 +14,7 @@ void main() {
   testWidgets('displays the Swift Dash app title',
       (WidgetTester tester) async {
     await tester.pumpWidget(const WaiterApp());
+    await tester.pump(const Duration(milliseconds: 3100));
 
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.title, 'Swift Dash');

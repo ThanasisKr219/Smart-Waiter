@@ -7,6 +7,7 @@ class AppStorageData {
   final List<TableModel> tables;
   final List<Category> menu;
   final Map<String, TableOrder> orders;
+  final List<OrderTicket> pendingTickets;
   final double shiftTotal;
   final int shiftTransactionsCount;
   final int shiftClosedTables;
@@ -19,6 +20,7 @@ class AppStorageData {
     required this.tables,
     required this.menu,
     required this.orders,
+    required this.pendingTickets,
     required this.shiftTotal,
     required this.shiftTransactionsCount,
     required this.shiftClosedTables,
@@ -48,6 +50,9 @@ class StorageService {
       final rawOrders = decoded['orders'] as Map<String, dynamic>? ?? {};
       final orders =
           rawOrders.map((k, v) => MapEntry(k, TableOrder.fromJson(v)));
+      final pendingTickets = (decoded['pendingTickets'] as List? ?? [])
+          .map((e) => OrderTicket.fromJson(e))
+          .toList();
 
       final shiftTotal = (decoded['shiftTotal'] as num?)?.toDouble() ?? 0.0;
       final shiftTransactionsCount = decoded['shiftTransactionsCount'] ?? 0;
@@ -68,6 +73,7 @@ class StorageService {
         tables: tables,
         menu: menu,
         orders: orders,
+        pendingTickets: pendingTickets,
         shiftTotal: shiftTotal,
         shiftTransactionsCount: shiftTransactionsCount,
         shiftClosedTables: shiftClosedTables,
@@ -85,6 +91,7 @@ class StorageService {
     required List<TableModel> tables,
     required List<Category> menu,
     required Map<String, TableOrder> orders,
+    required List<OrderTicket> pendingTickets,
     required double shiftTotal,
     required int shiftTransactionsCount,
     required int shiftClosedTables,
@@ -98,6 +105,7 @@ class StorageService {
       'tables': tables.map((e) => e.toJson()).toList(),
       'menu': menu.map((e) => e.toJson()).toList(),
       'orders': orders.map((k, v) => MapEntry(k, v.toJson())),
+      'pendingTickets': pendingTickets.map((e) => e.toJson()).toList(),
       'shiftTotal': shiftTotal,
       'shiftTransactionsCount': shiftTransactionsCount,
       'shiftClosedTables': shiftClosedTables,

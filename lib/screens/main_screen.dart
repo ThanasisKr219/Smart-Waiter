@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   List<TableModel> tables = [];
   List<Category> menu = [];
   Map<String, TableOrder> orders = {};
+  List<OrderTicket> pendingTickets = [];
 
   double shiftTotal = 0.0;
   int shiftTransactionsCount = 0;
@@ -368,6 +369,7 @@ class _MainScreenState extends State<MainScreen> {
     tables = loaded.tables;
     menu = loaded.menu;
     orders = loaded.orders;
+    pendingTickets = loaded.pendingTickets;
     shiftTotal = loaded.shiftTotal;
     shiftTransactionsCount = loaded.shiftTransactionsCount;
     shiftClosedTables = loaded.shiftClosedTables;
@@ -394,6 +396,7 @@ class _MainScreenState extends State<MainScreen> {
       tables: tables,
       menu: menu,
       orders: orders,
+      pendingTickets: pendingTickets,
       shiftTotal: shiftTotal,
       shiftTransactionsCount: shiftTransactionsCount,
       shiftClosedTables: shiftClosedTables,
@@ -404,6 +407,49 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // --- MAP & ORDER ACTIONS ---
+
+  void _addPendingTicket(OrderTicket ticket) {
+    setState(() => pendingTickets.add(ticket));
+    _saveData();
+  }
+
+  void _confirmPendingTicket(OrderTicket ticket) {
+    final target = tables.where((table) => table.id == ticket.tableId).firstOrNull;
+    if (target == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('The ticket table no longer exists.')),
+      );
+      return;
+    }
+    final master = _getMasterTable(target);
+    setState(() {
+      final order = orders.putIfAbsent(master.id, () => TableOrder(items: []));
+      for (final item in ticket.items) {
+        order.addOrGroupItem(item);
+      }
+      if (ticket.tableNote.trim().isNotEmpty) {
+        order.note = order.note.isEmpty
+            ? ticket.tableNote
+            : '${order.note} | ${ticket.tableNote}';
+      }
+      pendingTickets.removeWhere((pending) => pending.id == ticket.id);
+    });
+    _saveData();
+  }
+
+  void _rejectPendingTicket(OrderTicket ticket) {
+    setState(() => pendingTickets.removeWhere((pending) => pending.id == ticket.id));
+    _saveData();
+  }
+
+  void _updatePendingTicket(OrderTicket ticket) {
+    if (ticket.items.isEmpty) {
+      _rejectPendingTicket(ticket);
+      return;
+    }
+    setState(() {});
+    _saveData();
+  }
 
   bool _checkCollision(
       String tableId, double left, double top, double scale, String spaceId) {
@@ -455,6 +501,13 @@ class _MainScreenState extends State<MainScreen> {
           }
           sourceOrder.items.clear();
           sourceOrder.note = '';
+          for (final ticket in pendingTickets) {
+            if (ticket.tableId == sourceTable.id ||
+                ticket.tableId == masterSource.id) {
+              ticket.tableId = masterTarget.id;
+              ticket.tableName = masterTarget.name;
+            }
+          }
         });
         _saveData();
       },
@@ -484,6 +537,13 @@ class _MainScreenState extends State<MainScreen> {
             }
           }
           masterTarget.masterTableId = null;
+          for (final ticket in pendingTickets) {
+            if (ticket.tableId == sourceTable.id ||
+                ticket.tableId == masterSource.id) {
+              ticket.tableId = masterTarget.id;
+              ticket.tableName = masterTarget.name;
+            }
+          }
         });
         _saveData();
         final groupNames =
@@ -518,7 +578,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void _openOrderScreen(TableModel tappedTable) {
+  void _openOrderScreen(TableModel tappedTable, {OrderTicket? editingTicket}) {
     final TableModel masterTable = _getMasterTable(tappedTable);
     if (!orders.containsKey(masterTable.id)) {
       orders[masterTable.id] = TableOrder(items: []);
@@ -534,6 +594,31 @@ class _MainScreenState extends State<MainScreen> {
           onUnmergeSingle: (TableModel slave) => _unmergeSingleTable(slave),
           menu: menu,
           order: orders[masterTable.id]!,
+          pendingTickets: pendingTickets
+              .where((ticket) => ticket.tableId == masterTable.id)
+              .toList(),
+          editingTicket: editingTicket,
+          hasPendingTickets: () => pendingTickets.any(
+              (ticket) => ticket.tableId == masterTable.id),
+          onSendOrder: (items) {
+            _addPendingTicket(
+              OrderTicket(
+                id: uuid.v4(),
+                tableId: masterTable.id,
+                tableName: _getMergedGroup(masterTable)
+                    .map((table) => table.name)
+                    .join(' + '),
+                tableNote: orders[masterTable.id]!.note,
+                timestamp: DateTime.now(),
+                items: items,
+              ),
+            );
+          },
+          onPendingTicketChanged: _updatePendingTicket,
+          onPendingTicketRemoved: (id) {
+            setState(() => pendingTickets.removeWhere((ticket) => ticket.id == id));
+            _saveData();
+          },
           onOrderChanged: (bool isPaid, double paidAmount, bool isFullPayment,
               List<OrderItem> paidItems) {
             setState(() {
@@ -751,6 +836,17 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
       CatalogTab(menu: menu),
+      PendingTicketsTab(
+        tickets: pendingTickets,
+        onConfirm: _confirmPendingTicket,
+        onReject: _rejectPendingTicket,
+        onEdit: (ticket) {
+          final table = tables.where((item) => item.id == ticket.tableId).firstOrNull;
+          if (table != null) {
+            _openOrderScreen(table, editingTicket: ticket);
+          }
+        },
+      ),
       SetupTab(
         spaces: spaces,
         tables: tables,
@@ -843,10 +939,12 @@ class _MainScreenState extends State<MainScreen> {
                 : _currentIndex == 1
                     ? 'Catalog'
                     : _currentIndex == 2
-                        ? 'Setup'
+                        ? 'Pending Tickets'
                         : _currentIndex == 3
-                                ? 'Cash Register'
-                                : 'Notes',
+                                ? 'Setup'
+                                : _currentIndex == 4
+                                    ? 'Cash Register'
+                                    : 'Notes',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
@@ -962,6 +1060,7 @@ class _MainScreenState extends State<MainScreen> {
                               getSpaces: () => spaces,
                               getTables: () => tables,
                               getMenu: () => menu,
+                              getPendingTickets: () => pendingTickets,
                             );
                           },
                         ),
@@ -974,11 +1073,13 @@ class _MainScreenState extends State<MainScreen> {
                             _wifiSyncService.scanToSync(
                               context: context,
                               onSyncSuccess:
-                                  (syncedSpaces, syncedTables, syncedMenu) {
+                                  (syncedSpaces, syncedTables, syncedMenu,
+                                      syncedPendingTickets) {
                                 setState(() {
                                   spaces = syncedSpaces;
                                   tables = syncedTables;
                                   menu = syncedMenu;
+                                  pendingTickets = syncedPendingTickets;
                                   _sanitizeMergedTables();
 
                                   if (spaces.isNotEmpty) {
@@ -1010,7 +1111,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       body: pages[_currentIndex],
-      floatingActionButton: _currentIndex == 2
+      floatingActionButton: _currentIndex == 3
           ? FloatingActionButton.extended(
               backgroundColor: AppColors.electricCyan,
               icon: const Icon(Icons.add, color: AppColors.midnightNavy),
@@ -1030,7 +1131,7 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
               icon: Icon(Icons.map_outlined),
               selectedIcon: Icon(Icons.map),
@@ -1039,6 +1140,14 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.menu_book_outlined),
               selectedIcon: Icon(Icons.menu_book),
               label: 'Catalog'),
+          NavigationDestination(
+              icon: Badge(
+                  isLabelVisible: false, child: Icon(Icons.receipt_long)),
+              selectedIcon: Badge(
+                  label: Text('${pendingTickets.length}'),
+                  isLabelVisible: pendingTickets.isNotEmpty,
+                  child: Icon(Icons.receipt_long)),
+              label: 'Pending'),
           NavigationDestination(
               icon: Icon(Icons.tune_rounded),
               selectedIcon: Icon(Icons.tune_rounded),

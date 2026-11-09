@@ -84,3 +84,42 @@ class TableOrder {
             .toList(),
       );
 }
+
+class OrderTicket {
+  String id;
+  String tableId;
+  String tableName;
+  String tableNote;
+  DateTime timestamp;
+  List<OrderItem> items;
+
+  OrderTicket({
+    required this.id,
+    required this.tableId,
+    required this.tableName,
+    this.tableNote = '',
+    required this.timestamp,
+    required this.items,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'tableId': tableId,
+        'tableName': tableName,
+        'tableNote': tableNote,
+        'timestamp': timestamp.toIso8601String(),
+        'items': items.map((item) => item.toJson()).toList(),
+      };
+
+  factory OrderTicket.fromJson(Map<String, dynamic> json) => OrderTicket(
+        id: json['id'] ?? '',
+        tableId: json['tableId'] ?? '',
+        tableName: json['tableName'] ?? 'Unknown table',
+        tableNote: json['tableNote'] ?? '',
+        timestamp: DateTime.tryParse(json['timestamp'] ?? '') ??
+            DateTime.fromMillisecondsSinceEpoch(0),
+        items: (json['items'] as List? ?? [])
+            .map((item) => OrderItem.fromJson(item))
+            .toList(),
+      );
+}

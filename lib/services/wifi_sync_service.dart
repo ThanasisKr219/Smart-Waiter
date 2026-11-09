@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import '../models/pos_models.dart';
 import '../screens/scanner_screen.dart';
 import '../widgets/map_dialogs.dart';
+import '../theme/app_theme.dart';
 
 class WifiSyncService {
   io.HttpServer? _server;
@@ -194,7 +195,7 @@ class _PulsingStatusBadgeState extends State<_PulsingStatusBadge>
     return FadeTransition(
       opacity: Tween(begin: 0.65, end: 1.0).animate(_controller),
       child: const Chip(
-        avatar: Icon(Icons.circle, color: Colors.green, size: 10),
+        avatar: Icon(Icons.circle, color: AppColors.emerald, size: 10),
         label: Text(
           'Server Active • Waiting for devices',
           style: TextStyle(fontSize: 10),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../theme/app_theme.dart';
 
 class SetupMapTab extends StatelessWidget {
   final List<Space> spaces;
@@ -33,7 +34,7 @@ class SetupMapTab extends StatelessWidget {
       children: [
         const Text(
           'Manage Spaces & Tables',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+          style: TextStyle(fontSize: 14, color: AppColors.steelGrey),
         ),
         const SizedBox(height: 8),
         for (var s in spaces)
@@ -49,7 +50,7 @@ class SetupMapTab extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    icon: const Icon(Icons.edit, color: AppColors.electricCyan),
                     onPressed: () {
                       final c = TextEditingController(text: s.name);
                       showDialog(
@@ -75,7 +76,7 @@ class SetupMapTab extends StatelessWidget {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: const Icon(Icons.delete, color: AppColors.coralRed),
                     onPressed: () => onDeleteSpace(s),
                   ),
                 ],
@@ -95,12 +96,12 @@ class SetupMapTab extends StatelessWidget {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.edit,
-                                color: Colors.blue, size: 20),
+                                color: AppColors.electricCyan, size: 20),
                             onPressed: () => onEditTable(t),
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete,
-                                color: Colors.red, size: 20),
+                                color: AppColors.coralRed, size: 20),
                             onPressed: () => onDeleteTable(t),
                           ),
                         ],

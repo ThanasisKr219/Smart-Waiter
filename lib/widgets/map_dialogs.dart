@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../models/pos_models.dart';
+import '../theme/app_theme.dart';
 
 Future<T?> showSmoothDialog<T>({
   required BuildContext context,
@@ -13,7 +14,7 @@ Future<T?> showSmoothDialog<T>({
     context: context,
     barrierDismissible: barrierDismissible,
     barrierLabel: 'Dialog',
-    barrierColor: Colors.black.withValues(alpha: 0.55),
+    barrierColor: AppColors.midnightNavy.withValues(alpha: 0.85),
     transitionDuration: const Duration(milliseconds: 280),
     pageBuilder: (context, animation, secondaryAnimation) => builder(context),
     transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -124,7 +125,7 @@ class _SyncProgressDialogState extends State<SyncProgressDialog>
         return _ResultView(
           key: const ValueKey(SyncStage.success),
           icon: Icons.check_rounded,
-          color: Colors.green,
+          color: AppColors.emerald,
           title: 'Sync complete',
           message: _message!,
         );
@@ -175,7 +176,7 @@ class _ConnectingView extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.blue.withValues(
+                            color: AppColors.electricCyan.withValues(
                               alpha: (1 - controller.value) * 0.35,
                             ),
                           ),
@@ -184,10 +185,10 @@ class _ConnectingView extends StatelessWidget {
                     ),
                   const CircleAvatar(
                     radius: 30,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: AppColors.electricCyan,
                     child: Icon(
                       Icons.wifi_tethering,
-                      color: Colors.white,
+                      color: AppColors.midnightNavy,
                       size: 30,
                     ),
                   ),
@@ -230,7 +231,7 @@ class _ResultView extends StatelessWidget {
           CircleAvatar(
             radius: 34,
             backgroundColor: color,
-            child: Icon(icon, color: Colors.white, size: 42),
+            child: Icon(icon, color: AppColors.midnightNavy, size: 42),
           ),
           const SizedBox(height: 16),
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -262,10 +263,10 @@ class _ErrorView extends StatelessWidget {
         children: [
           const CircleAvatar(
             radius: 34,
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.coralRed,
             child: Icon(
               Icons.error_outline_rounded,
-              color: Colors.white,
+              color: AppColors.frostWhite,
               size: 42,
             ),
           ),
@@ -342,7 +343,7 @@ class MapDialogs {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.compare_arrows, color: Colors.blueGrey),
+            const Icon(Icons.compare_arrows, color: AppColors.steelGrey),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -366,10 +367,10 @@ class MapDialogs {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColors.electricCyan,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: Colors.grey.shade300,
-                disabledForegroundColor: Colors.grey.shade600,
+                disabledForegroundColor: AppColors.steelGrey,
                 padding: const EdgeInsets.symmetric(
                   vertical: 14,
                   horizontal: 12,
@@ -394,7 +395,7 @@ class MapDialogs {
                       fontSize: 11,
                       color: hasSourceOrder
                           ? Colors.white70
-                          : Colors.grey.shade600,
+                          : AppColors.steelGrey,
                     ),
                   ),
                 ],
@@ -436,7 +437,7 @@ class MapDialogs {
                   ),
                   Text(
                     'Merges the tables and their orders into one',
-                    style: TextStyle(fontSize: 11, color: Colors.white70),
+                    style: TextStyle(fontSize: 11, color: AppColors.frostWhite),
                   ),
                 ],
               ),
@@ -541,7 +542,7 @@ class MapDialogs {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.coralRed),
                 ),
               ),
               ElevatedButton(
@@ -686,8 +687,8 @@ class MapDialogs {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.emerald,
+                      foregroundColor: AppColors.midnightNavy,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
@@ -817,7 +818,7 @@ class MapDialogs {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.midnightNavy,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../theme/app_theme.dart';
 
 class CatalogTab extends StatelessWidget {
   final List<Category> menu;
@@ -31,7 +32,7 @@ class CatalogTab extends StatelessWidget {
                 const Divider(),
                 if (cat.items.isEmpty)
                   const Text('No products available',
-                      style: TextStyle(color: Colors.grey)),
+                      style: TextStyle(color: AppColors.steelGrey)),
                 for (final item in cat.items)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -42,7 +43,7 @@ class CatalogTab extends StatelessWidget {
                         Text('${item.price.toStringAsFixed(2)} €',
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.green)),
+                                color: AppColors.emerald)),
                       ],
                     ),
                   ),

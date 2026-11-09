@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/pos_models.dart';
 import '../utils/smart_search_helper.dart';
 import '../widgets/order_dialogs.dart';
+import '../theme/app_theme.dart';
 
 class OrderScreen extends StatefulWidget {
   final TableModel masterTable;
@@ -131,8 +132,8 @@ class _OrderScreenState extends State<OrderScreen> {
               padding: const EdgeInsets.only(right: 8.0),
               child: TextButton.icon(
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.cyan.shade50,
-                  foregroundColor: Colors.teal.shade900,
+                  backgroundColor: AppColors.deepSlateNavy,
+                  foregroundColor: AppColors.electricCyan,
                 ),
                 icon: const Icon(Icons.link_off, size: 18),
                 label: const Text('Unmerge',
@@ -181,7 +182,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 isDense: true,
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                fillColor: Colors.white,
+                fillColor: AppColors.deepSlateNavy,
                 filled: true,
               ),
               onChanged: (val) => setState(() => searchQuery = val),
@@ -195,9 +196,9 @@ class _OrderScreenState extends State<OrderScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.fastfood,
-                            size: 60, color: Colors.grey.shade300),
+                            size: 60, color: AppColors.steelGrey),
                         const Text('The catalog is empty',
-                            style: TextStyle(color: Colors.grey))
+                            style: TextStyle(color: AppColors.steelGrey))
                       ],
                     ),
                   )
@@ -239,13 +240,13 @@ class _OrderScreenState extends State<OrderScreen> {
                                       Text(
                                         '${item.price.toStringAsFixed(2)} €',
                                         style: const TextStyle(
-                                            color: Colors.green,
+                                            color: AppColors.emerald,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15),
                                       ),
                                       IconButton(
                                         icon: const Icon(Icons.edit_note,
-                                            color: Colors.blueGrey, size: 20),
+                                            color: AppColors.steelGrey, size: 20),
                                         tooltip: 'Quantity & Note',
                                         onPressed: () =>
                                             _openEditProductDialog(item),
@@ -285,9 +286,9 @@ class _OrderScreenState extends State<OrderScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.receipt,
-                            size: 50, color: Colors.grey.shade300),
+                            size: 50, color: AppColors.steelGrey),
                         const Text('This table has no order.',
-                            style: TextStyle(color: Colors.grey))
+                            style: TextStyle(color: AppColors.steelGrey))
                       ],
                     ),
                   )
@@ -304,7 +305,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         subtitle: item.note.isNotEmpty
                             ? Text(item.note,
                                 style: TextStyle(
-                                    color: Colors.blueGrey.shade700,
+                                    color: AppColors.steelGrey,
                                     fontSize: 12))
                             : null,
                         trailing: Row(
@@ -318,7 +319,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             const SizedBox(width: 4),
                             IconButton(
                               icon: const Icon(Icons.remove_circle_outline,
-                                  color: Colors.orange, size: 20),
+                                  color: AppColors.amber, size: 20),
                               onPressed: () {
                                 setState(() {
                                   if (item.quantity > 1) {
@@ -332,7 +333,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             ),
                             IconButton(
                               icon: const Icon(Icons.add_circle_outline,
-                                  color: Colors.green, size: 20),
+                                  color: AppColors.emerald, size: 20),
                               onPressed: () {
                                 setState(() {
                                   item.quantity++;
@@ -349,7 +350,7 @@ class _OrderScreenState extends State<OrderScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.deepSlateNavy,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black12,
@@ -367,8 +368,8 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.amber,
+                      foregroundColor: AppColors.midnightNavy,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
@@ -378,8 +379,8 @@ class _OrderScreenState extends State<OrderScreen> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.emerald,
+                      foregroundColor: AppColors.midnightNavy,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(
@@ -404,8 +405,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.white),
+                                        backgroundColor: AppColors.emerald,
+                                        foregroundColor: AppColors.midnightNavy),
                                     onPressed: () {
                                       final amountToPay = total;
                                       final paidItems = List<OrderItem>.from(

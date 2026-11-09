@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/floor_plan_canvas.dart';
+import '../../theme/app_theme.dart';
 
 class FloorPlanTab extends StatelessWidget {
   final double virtualCanvasWidth;
@@ -97,7 +98,7 @@ class FloorPlanTab extends StatelessWidget {
                 child: ChoiceChip(
                   avatar: sp.hasBounds
                       ? const Icon(Icons.crop_free,
-                          size: 14, color: Colors.teal)
+                          size: 14, color: AppColors.electricCyan)
                       : null,
                   label: Text(sp.name),
                   selected: sp.id == currentSpace.id,
@@ -113,7 +114,7 @@ class FloorPlanTab extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            color: Colors.blue.shade50,
+            color: AppColors.deepSlateNavy,
             child: Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -129,15 +130,15 @@ class FloorPlanTab extends StatelessWidget {
                 if (currentSpace.hasBounds)
                   TextButton.icon(
                     icon: const Icon(Icons.delete_outline,
-                        size: 16, color: Colors.red),
+                        size: 16, color: AppColors.coralRed),
                     label: const Text('Clear Bounds',
-                        style: TextStyle(fontSize: 12, color: Colors.red)),
+                        style: TextStyle(fontSize: 12, color: AppColors.coralRed)),
                     onPressed: onClearBoundsRequested,
                   ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.electricCyan,
+                    foregroundColor: AppColors.midnightNavy,
                   ),
                   icon: const Icon(Icons.check, size: 16),
                   label: const Text('Save & Lock',
@@ -152,10 +153,10 @@ class FloorPlanTab extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             color: isMapEditMode
-                ? Colors.yellow.shade100
+                ? AppColors.deepSlateNavy
                 : (useLockedBounds
-                    ? Colors.teal.shade50
-                    : Colors.grey.shade100),
+                    ? AppColors.deepSlateNavy
+                    : AppColors.midnightNavy),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -167,8 +168,10 @@ class FloorPlanTab extends StatelessWidget {
                           : Icons.touch_app),
                   size: 15,
                   color: isMapEditMode
-                      ? Colors.orange
-                      : (useLockedBounds ? Colors.teal : Colors.blueGrey),
+                      ? AppColors.amber
+                      : (useLockedBounds
+                          ? AppColors.electricCyan
+                          : AppColors.steelGrey),
                 ),
                 const SizedBox(width: 6),
                 Flexible(
@@ -178,7 +181,7 @@ class FloorPlanTab extends StatelessWidget {
                         : (useLockedBounds
                             ? 'Locked Bounds (${currentSpace.name}): Zoom and pan within bounds • Drag a table to transfer/merge'
                             : 'Free Floor Plan: Tap the Crop icon above to set bounds'),
-                    style: const TextStyle(fontSize: 11, color: Colors.black87),
+                    style: const TextStyle(fontSize: 11, color: AppColors.frostWhite),
                   ),
                 ),
               ],
@@ -188,12 +191,12 @@ class FloorPlanTab extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: AppColors.midnightNavy,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: useLockedBounds
-                    ? Colors.teal.shade400
-                    : Colors.grey.shade400,
+                    ? AppColors.electricCyan
+                    : AppColors.steelGrey,
                 width: useLockedBounds ? 2.0 : 1.5,
               ),
             ),

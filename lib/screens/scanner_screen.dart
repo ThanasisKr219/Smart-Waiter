@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../theme/app_theme.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -47,7 +48,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           IgnorePointer(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.42),
+                color: AppColors.midnightNavy.withValues(alpha: 0.72),
               ),
               child: Center(
                 child: Column(
@@ -57,7 +58,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       width: 260,
                       height: 190,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: AppColors.frostWhite, width: 2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -65,7 +66,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     const Text(
                       'Align the host QR code inside the frame',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.frostWhite,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),

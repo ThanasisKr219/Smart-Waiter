@@ -1,10 +1,8 @@
-<p align="center">
-  <img src="assets/app_icon.png" alt="Smart Waiter Logo" width="220" />
-</p>
+![Swift Dash Banner](assets/swift_dash_banner.jpg)
 
-# Smart Waiter — Mobile POS & Floor Plan Manager
+# Swift Dash — Effortless Tableside Ordering
 
-A modern, feature-rich, offline-first mobile Point of Sale (POS) and digital waiter ordering system built with **Flutter**. It features an interactive 2400x2400 virtual floor plan canvas with custom viewport bounding, drag-to-merge table management, fuzzy/phonetic product search, and peer-to-peer Wi-Fi synchronization via QR code.
+Swift Dash — Effortless Tableside Ordering
 
 ## Features
 
@@ -35,7 +33,7 @@ A modern, feature-rich, offline-first mobile Point of Sale (POS) and digital wai
 
 1. Download the latest `.apk` package from the **Releases** page on GitHub.
 2. Transfer the `.apk` file to your Android device and open it to install.
-3. Launch **Smart Waiter** from your home screen.
+3. Launch **Swift Dash** from your home screen.
 
 **User Guide**
 

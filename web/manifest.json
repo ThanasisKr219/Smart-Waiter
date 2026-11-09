@@ -1,11 +1,11 @@
 {
-    "name": "Smart Waiter",
-    "short_name": "Smart Waiter",
+    "name": "Swift Dash",
+    "short_name": "Swift Dash",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Swift Dash — Effortless Tableside Ordering",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

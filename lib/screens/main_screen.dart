@@ -11,7 +11,9 @@ import 'order_screen.dart';
 import 'pos_tabs.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final AppStorageData? initialData;
+
+  const MainScreen({super.key, required this.initialData});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -72,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
     _prodNameCtrl = TextEditingController();
     _prodPriceCtrl = TextEditingController();
     _mapTransformCtrl = TransformationController();
-    _loadData();
+    _initializeData();
   }
 
   @override
@@ -349,52 +351,40 @@ class _MainScreenState extends State<MainScreen> {
 
   // --- LOADING & SAVING ---
 
-  Future<void> _loadData() async {
-    final loaded = await StorageService.loadData();
-    if (!mounted) return;
-    if (loaded != null) {
-      setState(() {
-        spaces = loaded.spaces;
-        tables = loaded.tables;
-        menu = loaded.menu;
-        orders = loaded.orders;
-        shiftTotal = loaded.shiftTotal;
-        shiftTransactionsCount = loaded.shiftTransactionsCount;
-        shiftClosedTables = loaded.shiftClosedTables;
-        shiftTotalItems = loaded.shiftTotalItems;
-        shiftLog = loaded.shiftLog;
-        generalNotes = loaded.generalNotes;
-        _notepadCtrl.text = generalNotes;
-
-        _sanitizeMergedTables();
-
-        if (spaces.isNotEmpty &&
-            (activeSpaceId == null ||
-                !spaces.any((s) => s.id == activeSpaceId))) {
-          activeSpaceId = spaces.first.id;
-        }
-        if (spaces.isNotEmpty &&
-            (setupSelectedSpace == null ||
-                !spaces.any((s) => s.id == setupSelectedSpace))) {
-          setupSelectedSpace = spaces.first.id;
-        }
-        if (menu.isNotEmpty &&
-            (setupSelectedCat == null ||
-                !menu.any((c) => c.id == setupSelectedCat))) {
-          setupSelectedCat = menu.first.id;
-        }
-        isBoundsLocked = _activeSpace?.hasBounds ?? false;
-      });
-    } else {
+  void _initializeData() {
+    final loaded = widget.initialData;
+    if (loaded == null) {
       final firstSpace = Space(id: uuid.v4(), name: 'Main Area');
-      setState(() {
-        spaces.add(firstSpace);
-        activeSpaceId = firstSpace.id;
-        setupSelectedSpace = firstSpace.id;
-        isBoundsLocked = false;
-      });
+      spaces.add(firstSpace);
+      activeSpaceId = firstSpace.id;
+      setupSelectedSpace = firstSpace.id;
+      isBoundsLocked = false;
       _saveData();
+      return;
     }
+
+    spaces = loaded.spaces;
+    tables = loaded.tables;
+    menu = loaded.menu;
+    orders = loaded.orders;
+    shiftTotal = loaded.shiftTotal;
+    shiftTransactionsCount = loaded.shiftTransactionsCount;
+    shiftClosedTables = loaded.shiftClosedTables;
+    shiftTotalItems = loaded.shiftTotalItems;
+    shiftLog = loaded.shiftLog;
+    generalNotes = loaded.generalNotes;
+    _notepadCtrl.text = generalNotes;
+
+    _sanitizeMergedTables();
+
+    if (spaces.isNotEmpty) {
+      activeSpaceId = spaces.first.id;
+      setupSelectedSpace = spaces.first.id;
+    }
+    if (menu.isNotEmpty) {
+      setupSelectedCat = menu.first.id;
+    }
+    isBoundsLocked = _activeSpace?.hasBounds ?? false;
   }
 
   Future<void> _saveData() async {

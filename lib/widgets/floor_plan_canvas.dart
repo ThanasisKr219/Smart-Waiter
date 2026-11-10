@@ -11,6 +11,7 @@ class FloorPlanCanvas extends StatefulWidget {
   final List<TableModel> currentTables;
   final Space currentSpace;
   final Map<String, TableOrder> orders;
+  final List<OrderTicket> pendingTickets;
   final TransformationController mapTransformCtrl;
   final double effectiveBaseScale;
   final bool clampToSpaceBounds;
@@ -39,6 +40,7 @@ class FloorPlanCanvas extends StatefulWidget {
     required this.currentTables,
     required this.currentSpace,
     required this.orders,
+    required this.pendingTickets,
     required this.mapTransformCtrl,
     required this.effectiveBaseScale,
     required this.clampToSpaceBounds,
@@ -104,6 +106,7 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
     final currentTables = widget.currentTables;
     final currentSpace = widget.currentSpace;
     final orders = widget.orders;
+    final pendingTickets = widget.pendingTickets;
     final mapTransformCtrl = widget.mapTransformCtrl;
     final effectiveBaseScale = widget.effectiveBaseScale;
     final clampToSpaceBounds = widget.clampToSpaceBounds;
@@ -180,6 +183,12 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                 final bool isMerged = group.length > 1;
                 final bool hasActiveOrder =
                     orders[master.id]?.items.isNotEmpty ?? false;
+                final groupTableIds = group.map((table) => table.id).toSet();
+                final bool hasPendingTickets = pendingTickets.any(
+                  (ticket) => groupTableIds.contains(ticket.tableId),
+                );
+                final double currentTotal = (orders[master.id]?.items ?? [])
+                    .fold(0.0, (sum, item) => sum + item.totalPrice);
                 final String? mergeLabel = isMerged
                     ? (table.id == master.id
                           ? '${group.length} Tbl.'
@@ -274,6 +283,8 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                             child: TableCircleWidget(
                               table: table,
                               hasActiveOrder: hasActiveOrder,
+                              hasPendingTickets: hasPendingTickets,
+                              currentTotal: currentTotal,
                               isMerged: isMerged,
                               mergeLabel: mergeLabel,
                             ),
@@ -303,6 +314,8 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                                         child: TableCircleWidget(
                                           table: table,
                                           hasActiveOrder: hasActiveOrder,
+                                          hasPendingTickets: hasPendingTickets,
+                                          currentTotal: currentTotal,
                                           isMerged: isMerged,
                                           mergeLabel: mergeLabel,
                                         ),
@@ -315,6 +328,8 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                                   child: TableCircleWidget(
                                     table: table,
                                     hasActiveOrder: hasActiveOrder,
+                                    hasPendingTickets: hasPendingTickets,
+                                    currentTotal: currentTotal,
                                     isMerged: isMerged,
                                     mergeLabel: mergeLabel,
                                   ),
@@ -324,6 +339,8 @@ class _FloorPlanCanvasState extends State<FloorPlanCanvas> {
                                   child: TableCircleWidget(
                                     table: table,
                                     hasActiveOrder: hasActiveOrder,
+                                    hasPendingTickets: hasPendingTickets,
+                                    currentTotal: currentTotal,
                                     isMerged: isMerged,
                                     mergeLabel: mergeLabel,
                                     isHighlightedTarget: isTargetHighlighted,

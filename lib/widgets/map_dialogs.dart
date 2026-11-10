@@ -462,13 +462,10 @@ class MapDialogs {
     required BuildContext context,
     required TableModel table,
     required VoidCallback onDelete,
-    required void Function(String newName, double newScale, int newColor)
-    onSave,
+    required void Function(String newName, double newScale) onSave,
   }) {
     final nameC = TextEditingController(text: table.name);
     double tempScale = table.scale;
-    int tempColor = table.colorValue;
-
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -501,36 +498,6 @@ class MapDialogs {
                     onSelectionChanged: (val) =>
                         setSubState(() => tempScale = val.first),
                   ),
-                  const SizedBox(height: 12),
-                  const Text('Color:'),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        [
-                          0xFF34495E,
-                          0xFFE74C3C,
-                          0xFF2ECC71,
-                          0xFF3498DB,
-                          0xFFF1C40F,
-                          0xFF9B59B6,
-                          0xFF000000,
-                        ].map((col) {
-                          return GestureDetector(
-                            onTap: () => setSubState(() => tempColor = col),
-                            child: CircleAvatar(
-                              backgroundColor: Color(col),
-                              radius: 15,
-                              child: tempColor == col
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 16,
-                                      color: Colors.white,
-                                    )
-                                  : null,
-                            ),
-                          );
-                        }).toList(),
-                  ),
                 ],
               ),
             ),
@@ -547,7 +514,7 @@ class MapDialogs {
               ),
               ElevatedButton(
                 onPressed: () {
-                  onSave(nameC.text, tempScale, tempColor);
+                  onSave(nameC.text, tempScale);
                   Navigator.pop(ctx);
                 },
                 child: const Text('Save'),
@@ -565,15 +532,11 @@ class MapDialogs {
     required TextEditingController spaceNameCtrl,
     required TextEditingController tableNameCtrl,
     required String? initialSelectedSpace,
-    required int initialSelectedColor,
     required void Function(String?) onSpaceChanged,
-    required void Function(int) onColorChanged,
     required void Function(String spaceName) onAddSpace,
-    required void Function(String spaceId, String tableName, int colorValue)
-    onAddTable,
+    required void Function(String spaceId, String tableName) onAddTable,
   }) {
     String? currentSpace = initialSelectedSpace;
-    int currentColor = initialSelectedColor;
 
     showModalBottomSheet(
       context: context,
@@ -650,39 +613,6 @@ class MapDialogs {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  children:
-                      [
-                        0xFF34495E,
-                        0xFFE74C3C,
-                        0xFF2ECC71,
-                        0xFF3498DB,
-                        0xFFF1C40F,
-                        0xFF9B59B6,
-                        0xFF000000,
-                      ].map((col) {
-                        return GestureDetector(
-                          onTap: () {
-                            currentColor = col;
-                            onColorChanged(col);
-                            setModalState(() {});
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: Color(col),
-                            radius: 16,
-                            child: currentColor == col
-                                ? const Icon(
-                                    Icons.check,
-                                    size: 16,
-                                    color: Colors.white,
-                                  )
-                                : null,
-                          ),
-                        );
-                      }).toList(),
-                ),
-                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -693,11 +623,7 @@ class MapDialogs {
                     ),
                     onPressed: () {
                       if (currentSpace == null) return;
-                      onAddTable(
-                        currentSpace!,
-                        tableNameCtrl.text,
-                        currentColor,
-                      );
+                      onAddTable(currentSpace!, tableNameCtrl.text);
                       tableNameCtrl.clear();
                       Navigator.pop(ctx);
                     },

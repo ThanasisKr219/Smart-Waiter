@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../theme/app_theme.dart';
@@ -41,8 +42,10 @@ class SetupMapTab extends StatelessWidget {
           Card(
             margin: const EdgeInsets.only(bottom: 8),
             child: ExpansionTile(
-              title: Text(s.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                s.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(
                 '${tables.where((t) => t.spaceId == s.id).length} tables • ${s.hasBounds ? "Locked Bounds" : "Free Bounds"}',
               ),
@@ -87,7 +90,7 @@ class SetupMapTab extends StatelessWidget {
                     (t) => ListTile(
                       dense: true,
                       leading: CircleAvatar(
-                        backgroundColor: Color(t.colorValue),
+                        backgroundColor: AppColors.deepSlateNavy,
                         radius: 12,
                       ),
                       title: Text(t.name),
@@ -95,13 +98,19 @@ class SetupMapTab extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit,
-                                color: AppColors.electricCyan, size: 20),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: AppColors.electricCyan,
+                              size: 20,
+                            ),
                             onPressed: () => onEditTable(t),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete,
-                                color: AppColors.coralRed, size: 20),
+                            icon: const Icon(
+                              Icons.delete,
+                              color: AppColors.coralRed,
+                              size: 20,
+                            ),
                             onPressed: () => onDeleteTable(t),
                           ),
                         ],

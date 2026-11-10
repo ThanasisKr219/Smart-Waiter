@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../../models/pos_models.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/floor_plan_canvas.dart';
@@ -13,6 +15,7 @@ class FloorPlanTab extends StatelessWidget {
   final Space? activeSpace;
   final List<TableModel> currentTables;
   final Map<String, TableOrder> orders;
+  final List<OrderTicket> pendingTickets;
   final TransformationController mapTransformCtrl;
   final bool isMapEditMode;
   final bool isSettingBoundsMode;
@@ -29,14 +32,14 @@ class FloorPlanTab extends StatelessWidget {
   final TableModel Function(TableModel) getMasterTable;
   final List<TableModel> Function(TableModel) getMergedGroup;
   final bool Function(String tableId, double left, double top, double scale)
-      checkCollision;
+  checkCollision;
   final void Function(TableModel table, double newLeft, double newTop)
-      onTableMoved;
+  onTableMoved;
   final VoidCallback onTableMoveEnded;
   final void Function(TableModel) onEditTable;
   final void Function(TableModel) onOpenOrder;
   final void Function(TableModel source, TableModel target)
-      onTransferOrMergeRequested;
+  onTransferOrMergeRequested;
   final void Function(Rect newTempBounds) onTempBoundsChanged;
 
   const FloorPlanTab({
@@ -48,6 +51,7 @@ class FloorPlanTab extends StatelessWidget {
     required this.activeSpace,
     required this.currentTables,
     required this.orders,
+    required this.pendingTickets,
     required this.mapTransformCtrl,
     required this.isMapEditMode,
     required this.isSettingBoundsMode,
@@ -97,8 +101,11 @@ class FloorPlanTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: ChoiceChip(
                   avatar: sp.hasBounds
-                      ? const Icon(Icons.crop_free,
-                          size: 14, color: AppColors.electricCyan)
+                      ? const Icon(
+                          Icons.crop_free,
+                          size: 14,
+                          color: AppColors.electricCyan,
+                        )
                       : null,
                   label: Text(sp.name),
                   selected: sp.id == currentSpace.id,
@@ -123,16 +130,23 @@ class FloorPlanTab extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   icon: const Icon(Icons.auto_fix_high, size: 16),
-                  label: const Text('Auto-fit Tables',
-                      style: TextStyle(fontSize: 12)),
+                  label: const Text(
+                    'Auto-fit Tables',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   onPressed: onAutoBoundsRequested,
                 ),
                 if (currentSpace.hasBounds)
                   TextButton.icon(
-                    icon: const Icon(Icons.delete_outline,
-                        size: 16, color: AppColors.coralRed),
-                    label: const Text('Clear Bounds',
-                        style: TextStyle(fontSize: 12, color: AppColors.coralRed)),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 16,
+                      color: AppColors.coralRed,
+                    ),
+                    label: const Text(
+                      'Clear Bounds',
+                      style: TextStyle(fontSize: 12, color: AppColors.coralRed),
+                    ),
                     onPressed: onClearBoundsRequested,
                   ),
                 ElevatedButton.icon(
@@ -141,8 +155,10 @@ class FloorPlanTab extends StatelessWidget {
                     foregroundColor: AppColors.midnightNavy,
                   ),
                   icon: const Icon(Icons.check, size: 16),
-                  label: const Text('Save & Lock',
-                      style: TextStyle(fontSize: 12)),
+                  label: const Text(
+                    'Save & Lock',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   onPressed: onSaveBoundsRequested,
                 ),
               ],
@@ -155,8 +171,8 @@ class FloorPlanTab extends StatelessWidget {
             color: isMapEditMode
                 ? AppColors.deepSlateNavy
                 : (useLockedBounds
-                    ? AppColors.deepSlateNavy
-                    : AppColors.midnightNavy),
+                      ? AppColors.deepSlateNavy
+                      : AppColors.midnightNavy),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -164,14 +180,14 @@ class FloorPlanTab extends StatelessWidget {
                   isMapEditMode
                       ? Icons.open_with
                       : (useLockedBounds
-                          ? Icons.lock_outline
-                          : Icons.touch_app),
+                            ? Icons.lock_outline
+                            : Icons.touch_app),
                   size: 15,
                   color: isMapEditMode
                       ? AppColors.amber
                       : (useLockedBounds
-                          ? AppColors.electricCyan
-                          : AppColors.steelGrey),
+                            ? AppColors.electricCyan
+                            : AppColors.steelGrey),
                 ),
                 const SizedBox(width: 6),
                 Flexible(
@@ -179,9 +195,12 @@ class FloorPlanTab extends StatelessWidget {
                     isMapEditMode
                         ? 'Edit Mode: Drag tables | Tap to edit'
                         : (useLockedBounds
-                            ? 'Locked Bounds (${currentSpace.name}): Zoom and pan within bounds • Drag a table to transfer/merge'
-                            : 'Free Floor Plan: Tap the Crop icon above to set bounds'),
-                    style: const TextStyle(fontSize: 11, color: AppColors.frostWhite),
+                              ? 'Locked Bounds (${currentSpace.name}): Zoom and pan within bounds • Drag a table to transfer/merge'
+                              : 'Free Floor Plan: Tap the Crop icon above to set bounds'),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.frostWhite,
+                    ),
                   ),
                 ),
               ],
@@ -205,7 +224,8 @@ class FloorPlanTab extends StatelessWidget {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   onViewportSizeReported(
-                      Size(constraints.maxWidth, constraints.maxHeight));
+                    Size(constraints.maxWidth, constraints.maxHeight),
+                  );
 
                   if (useLockedBounds) {
                     final double bx = currentSpace.boundLeft!;
@@ -214,7 +234,9 @@ class FloorPlanTab extends StatelessWidget {
                     final double bh = currentSpace.boundHeight!;
 
                     final double fitScale = min(
-                        constraints.maxWidth / bw, constraints.maxHeight / bh);
+                      constraints.maxWidth / bw,
+                      constraints.maxHeight / bh,
+                    );
                     final double fittedW = bw * fitScale;
                     final double fittedH = bh * fitScale;
 
@@ -224,7 +246,8 @@ class FloorPlanTab extends StatelessWidget {
                         height: fittedH,
                         child: InteractiveViewer(
                           key: ValueKey(
-                              'locked_${currentSpace.id}_${bw.round()}_${bh.round()}'),
+                            'locked_${currentSpace.id}_${bw.round()}_${bh.round()}',
+                          ),
                           transformationController: mapTransformCtrl,
                           constrained: true,
                           boundaryMargin: EdgeInsets.zero,
@@ -256,6 +279,7 @@ class FloorPlanTab extends StatelessWidget {
                                         currentTables: currentTables,
                                         currentSpace: currentSpace,
                                         orders: orders,
+                                        pendingTickets: pendingTickets,
                                         mapTransformCtrl: mapTransformCtrl,
                                         effectiveBaseScale: fitScale,
                                         clampToSpaceBounds: true,
@@ -305,6 +329,7 @@ class FloorPlanTab extends StatelessWidget {
                           currentTables: currentTables,
                           currentSpace: currentSpace,
                           orders: orders,
+                          pendingTickets: pendingTickets,
                           mapTransformCtrl: mapTransformCtrl,
                           effectiveBaseScale: 1.0,
                           clampToSpaceBounds: false,

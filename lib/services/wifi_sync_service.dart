@@ -58,8 +58,9 @@ class WifiSyncService {
             'spaces': getSpaces().map((e) => e.toJson()).toList(),
             'tables': getTables().map((e) => e.toJson()).toList(),
             'menu': getMenu().map((e) => e.toJson()).toList(),
-            'pendingTickets':
-                getPendingTickets().map((e) => e.toJson()).toList(),
+            'pendingTickets': getPendingTickets()
+                .map((e) => e.toJson())
+                .toList(),
           };
           request.response.write(jsonEncode(map));
         }
@@ -72,9 +73,11 @@ class WifiSyncService {
       showSmoothDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Row(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(child: Text('Server started!')),
+              const Text('Server started!'),
+              const SizedBox(height: 12),
               _PulsingStatusBadge(),
             ],
           ),
@@ -161,12 +164,15 @@ class WifiSyncService {
           final syncedMenu = (data['menu'] as List)
               .map((e) => Category.fromJson(e))
               .toList();
-          final syncedPendingTickets =
-              (data['pendingTickets'] as List? ?? [])
-                  .map((e) => OrderTicket.fromJson(e))
-                  .toList();
+          final syncedPendingTickets = (data['pendingTickets'] as List? ?? [])
+              .map((e) => OrderTicket.fromJson(e))
+              .toList();
           onSyncSuccess(
-              syncedSpaces, syncedTables, syncedMenu, syncedPendingTickets);
+            syncedSpaces,
+            syncedTables,
+            syncedMenu,
+            syncedPendingTickets,
+          );
           return 'Synced ${syncedSpaces.length} spaces, '
               '${syncedTables.length} tables, ${syncedMenu.length} categories '
               '& ${syncedPendingTickets.length} pending tickets';

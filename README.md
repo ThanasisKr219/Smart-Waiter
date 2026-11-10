@@ -2,7 +2,6 @@
 
 # Swift Dash — Effortless Tableside Ordering
 
-Swift Dash — Effortless Tableside Ordering
 
 ## Features
 
@@ -61,8 +60,8 @@ Swift Dash — Effortless Tableside Ordering
 **Clone the repository**
 
 ```bash
-git clone https://github.com/ThanasisKr219/Smart-Waiter.git
-cd Smart-Waiter
+git clone https://github.com/ThanasisKr219/Swift-Dash.git
+cd Swift-Dash
 flutter pub get
 flutter run
 ```

@@ -1,4 +1,5 @@
-﻿import 'dart:math';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -50,8 +51,6 @@ class _MainScreenState extends State<MainScreen> {
   String? activeSpaceId;
   String? setupSelectedSpace;
   String? setupSelectedCat;
-  int setupSelectedColor = 0xFF34495E;
-
   bool isMapEditMode = false;
   bool isSettingBoundsMode = false;
   bool isBoundsLocked = true;
@@ -126,24 +125,34 @@ class _MainScreenState extends State<MainScreen> {
     final double centerX = (minX + maxX) / 2.0;
     final double centerY = (minY + maxY) / 2.0;
 
-    double left =
-        (centerX - width / 2.0).clamp(0.0, virtualCanvasWidth - width);
-    double top =
-        (centerY - height / 2.0).clamp(0.0, virtualCanvasHeight - height);
+    double left = (centerX - width / 2.0).clamp(
+      0.0,
+      virtualCanvasWidth - width,
+    );
+    double top = (centerY - height / 2.0).clamp(
+      0.0,
+      virtualCanvasHeight - height,
+    );
 
     return Rect.fromLTWH(left, top, width, height);
   }
 
   void _focusFreeCameraOnRect(Rect targetRect, {double margin = 120.0}) {
-    final double vw =
-        _lastViewportSize.width <= 0 ? 400.0 : _lastViewportSize.width;
-    final double vh =
-        _lastViewportSize.height <= 0 ? 600.0 : _lastViewportSize.height;
+    final double vw = _lastViewportSize.width <= 0
+        ? 400.0
+        : _lastViewportSize.width;
+    final double vh = _lastViewportSize.height <= 0
+        ? 600.0
+        : _lastViewportSize.height;
 
-    final double paddedW =
-        (targetRect.width + margin * 2).clamp(200.0, virtualCanvasWidth);
-    final double paddedH =
-        (targetRect.height + margin * 2).clamp(200.0, virtualCanvasHeight);
+    final double paddedW = (targetRect.width + margin * 2).clamp(
+      200.0,
+      virtualCanvasWidth,
+    );
+    final double paddedH = (targetRect.height + margin * 2).clamp(
+      200.0,
+      virtualCanvasHeight,
+    );
 
     final double scale = min(vw / paddedW, vh / paddedH).clamp(0.2, 2.0);
     final double tx = (vw / 2.0) - (targetRect.center.dx * scale);
@@ -181,7 +190,11 @@ class _MainScreenState extends State<MainScreen> {
       setState(() {
         _focusFreeCameraOnRect(
           Rect.fromLTWH(
-              _tempBoundLeft, _tempBoundTop, _tempBoundWidth, _tempBoundHeight),
+            _tempBoundLeft,
+            _tempBoundTop,
+            _tempBoundWidth,
+            _tempBoundHeight,
+          ),
           margin: 180.0,
         );
       });
@@ -226,9 +239,8 @@ class _MainScreenState extends State<MainScreen> {
     });
     _saveData();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Space bounds removed.')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Space bounds removed.')));
   }
 
   void _toggleFocusLockButton() {
@@ -244,7 +256,8 @@ class _MainScreenState extends State<MainScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Drag the corners to set the space bounds and press Save!'),
+            'Drag the corners to set the space bounds and press Save!',
+          ),
           duration: Duration(seconds: 3),
         ),
       );
@@ -290,9 +303,11 @@ class _MainScreenState extends State<MainScreen> {
   List<TableModel> _getMergedGroup(TableModel table) {
     final master = _getMasterTable(table);
     return tables
-        .where((t) =>
-            t.spaceId == master.spaceId &&
-            (t.id == master.id || t.masterTableId == master.id))
+        .where(
+          (t) =>
+              t.spaceId == master.spaceId &&
+              (t.id == master.id || t.masterTableId == master.id),
+        )
         .toList();
   }
 
@@ -313,8 +328,9 @@ class _MainScreenState extends State<MainScreen> {
   void _deleteTableSafe(TableModel table) {
     setState(() {
       if (table.masterTableId == null) {
-        final slaves =
-            tables.where((t) => t.masterTableId == table.id).toList();
+        final slaves = tables
+            .where((t) => t.masterTableId == table.id)
+            .toList();
         if (slaves.isNotEmpty) {
           final newMaster = slaves.first;
           newMaster.masterTableId = null;
@@ -414,7 +430,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _confirmPendingTicket(OrderTicket ticket) {
-    final target = tables.where((table) => table.id == ticket.tableId).firstOrNull;
+    final target = tables
+        .where((table) => table.id == ticket.tableId)
+        .firstOrNull;
     if (target == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('The ticket table no longer exists.')),
@@ -438,7 +456,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _rejectPendingTicket(OrderTicket ticket) {
-    setState(() => pendingTickets.removeWhere((pending) => pending.id == ticket.id));
+    setState(
+      () => pendingTickets.removeWhere((pending) => pending.id == ticket.id),
+    );
     _saveData();
   }
 
@@ -452,13 +472,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   bool _checkCollision(
-      String tableId, double left, double top, double scale, String spaceId) {
+    String tableId,
+    double left,
+    double top,
+    double scale,
+    String spaceId,
+  ) {
     double r1 = 38.0 * scale;
     double c1X = left + r1;
     double c1Y = top + r1;
 
-    for (var t
-        in tables.where((tbl) => tbl.spaceId == spaceId && tbl.id != tableId)) {
+    for (var t in tables.where(
+      (tbl) => tbl.spaceId == spaceId && tbl.id != tableId,
+    )) {
       double r2 = 38.0 * t.scale;
       double c2X = t.left + r2;
       double c2Y = t.top + r2;
@@ -537,17 +563,11 @@ class _MainScreenState extends State<MainScreen> {
             }
           }
           masterTarget.masterTableId = null;
-          for (final ticket in pendingTickets) {
-            if (ticket.tableId == sourceTable.id ||
-                ticket.tableId == masterSource.id) {
-              ticket.tableId = masterTarget.id;
-              ticket.tableName = masterTarget.name;
-            }
-          }
         });
         _saveData();
-        final groupNames =
-            _getMergedGroup(masterTarget).map((e) => e.name).join(' + ');
+        final groupNames = _getMergedGroup(masterTarget)
+            .map((e) => e.name)
+            .join(' + ');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Merged: $groupNames'),
@@ -563,11 +583,10 @@ class _MainScreenState extends State<MainScreen> {
       context: context,
       table: table,
       onDelete: () => _deleteTableSafe(table),
-      onSave: (newName, newScale, newColor) {
+      onSave: (newName, newScale) {
         setState(() {
           table.name = newName;
           table.scale = newScale;
-          table.colorValue = newColor;
           final double maxCoordX = virtualCanvasWidth - (76.0 * newScale);
           final double maxCoordY = virtualCanvasHeight - (76.0 * newScale);
           table.left = table.left.clamp(8.0, maxCoordX);
@@ -595,11 +614,18 @@ class _MainScreenState extends State<MainScreen> {
           menu: menu,
           order: orders[masterTable.id]!,
           pendingTickets: pendingTickets
-              .where((ticket) => ticket.tableId == masterTable.id)
+              .where(
+                (ticket) =>
+                    _getMergedGroup(masterTable)
+                        .any((table) => table.id == ticket.tableId),
+              )
               .toList(),
           editingTicket: editingTicket,
           hasPendingTickets: () => pendingTickets.any(
-              (ticket) => ticket.tableId == masterTable.id),
+            (ticket) =>
+                _getMergedGroup(masterTable)
+                    .any((table) => table.id == ticket.tableId),
+          ),
           onSendOrder: (items) {
             _addPendingTicket(
               OrderTicket(
@@ -616,46 +642,56 @@ class _MainScreenState extends State<MainScreen> {
           },
           onPendingTicketChanged: _updatePendingTicket,
           onPendingTicketRemoved: (id) {
-            setState(() => pendingTickets.removeWhere((ticket) => ticket.id == id));
+            setState(
+              () => pendingTickets.removeWhere((ticket) => ticket.id == id),
+            );
             _saveData();
           },
-          onOrderChanged: (bool isPaid, double paidAmount, bool isFullPayment,
-              List<OrderItem> paidItems) {
-            setState(() {
-              if (isPaid) {
-                final mergedGroup = _getMergedGroup(masterTable);
-                final String displayTableName =
-                    mergedGroup.map((t) => t.name).join(' + ');
+          onOrderChanged:
+              (
+                bool isPaid,
+                double paidAmount,
+                bool isFullPayment,
+                List<OrderItem> paidItems,
+              ) {
+                setState(() {
+                  if (isPaid) {
+                    final mergedGroup = _getMergedGroup(masterTable);
+                    final String displayTableName = mergedGroup
+                        .map((t) => t.name)
+                        .join(' + ');
 
-                shiftTotal += paidAmount;
-                shiftTransactionsCount += 1;
+                    shiftTotal += paidAmount;
+                    shiftTransactionsCount += 1;
 
-                final int countItems =
-                    paidItems.fold(0, (sum, item) => sum + item.quantity);
-                shiftTotalItems += countItems;
+                    final int countItems = paidItems.fold(
+                      0,
+                      (sum, item) => sum + item.quantity,
+                    );
+                    shiftTotalItems += countItems;
 
-                if (isFullPayment) {
-                  shiftClosedTables += mergedGroup.length;
-                  for (var t in mergedGroup) {
-                    t.masterTableId = null;
+                    if (isFullPayment) {
+                      shiftClosedTables += mergedGroup.length;
+                      for (var t in mergedGroup) {
+                        t.masterTableId = null;
+                      }
+                    }
+
+                    shiftLog.insert(
+                      0,
+                      ShiftTransaction(
+                        id: uuid.v4(),
+                        time: DateTime.now(),
+                        tableName: displayTableName,
+                        type: isFullPayment ? 'Full' : 'Partial',
+                        amount: paidAmount,
+                        items: paidItems,
+                      ),
+                    );
                   }
-                }
-
-                shiftLog.insert(
-                  0,
-                  ShiftTransaction(
-                    id: uuid.v4(),
-                    time: DateTime.now(),
-                    tableName: displayTableName,
-                    type: isFullPayment ? 'Full' : 'Partial',
-                    amount: paidAmount,
-                    items: paidItems,
-                  ),
-                );
-              }
-            });
-            _saveData();
-          },
+                });
+                _saveData();
+              },
         ),
       ),
     ).then((_) {
@@ -677,9 +713,7 @@ class _MainScreenState extends State<MainScreen> {
       spaceNameCtrl: _spaceNameCtrl,
       tableNameCtrl: _tableNameCtrl,
       initialSelectedSpace: setupSelectedSpace,
-      initialSelectedColor: setupSelectedColor,
       onSpaceChanged: (v) => setState(() => setupSelectedSpace = v),
-      onColorChanged: (col) => setState(() => setupSelectedColor = col),
       onAddSpace: (spaceName) {
         setState(() {
           spaces.add(Space(id: uuid.v4(), name: spaceName));
@@ -688,13 +722,15 @@ class _MainScreenState extends State<MainScreen> {
         });
         _saveData();
       },
-      onAddTable: (spaceId, rawTableName, colorVal) {
+      onAddTable: (spaceId, rawTableName) {
         final targetSpace = spaces.firstWhere((s) => s.id == spaceId);
 
-        final double startX =
-            targetSpace.hasBounds ? targetSpace.boundLeft! + 20.0 : 30.0;
-        final double startY =
-            targetSpace.hasBounds ? targetSpace.boundTop! + 20.0 : 30.0;
+        final double startX = targetSpace.hasBounds
+            ? targetSpace.boundLeft! + 20.0
+            : 30.0;
+        final double startY = targetSpace.hasBounds
+            ? targetSpace.boundTop! + 20.0
+            : 30.0;
         final double limitX = targetSpace.hasBounds
             ? (targetSpace.boundLeft! + targetSpace.boundWidth! - 85.0)
             : 750.0;
@@ -720,7 +756,7 @@ class _MainScreenState extends State<MainScreen> {
               name: rawTableName.trim().isEmpty
                   ? 'T$countInSpace'
                   : rawTableName.trim(),
-              colorValue: colorVal,
+              colorValue: 0xFF1E2D42,
               top: spawnY.clamp(8.0, virtualCanvasHeight - 80.0),
               left: spawnX.clamp(8.0, virtualCanvasWidth - 80.0),
               spaceId: spaceId,
@@ -756,9 +792,10 @@ class _MainScreenState extends State<MainScreen> {
       },
       onAddProduct: (catId, prodName, price) {
         setState(() {
-          menu.firstWhere((c) => c.id == catId).items.add(
-                Product(id: uuid.v4(), name: prodName, price: price),
-              );
+          menu
+              .firstWhere((c) => c.id == catId)
+              .items
+              .add(Product(id: uuid.v4(), name: prodName, price: price));
         });
         _saveData();
       },
@@ -781,12 +818,17 @@ class _MainScreenState extends State<MainScreen> {
         activeSpace: currentSpace,
         currentTables: currentTables,
         orders: orders,
+        pendingTickets: pendingTickets,
         mapTransformCtrl: _mapTransformCtrl,
         isMapEditMode: isMapEditMode,
         isSettingBoundsMode: isSettingBoundsMode,
         isBoundsLocked: isBoundsLocked,
         tempBounds: Rect.fromLTWH(
-            _tempBoundLeft, _tempBoundTop, _tempBoundWidth, _tempBoundHeight),
+          _tempBoundLeft,
+          _tempBoundTop,
+          _tempBoundWidth,
+          _tempBoundHeight,
+        ),
         onSelectSpace: (sp) {
           setState(() {
             activeSpaceId = sp.id;
@@ -841,7 +883,9 @@ class _MainScreenState extends State<MainScreen> {
         onConfirm: _confirmPendingTicket,
         onReject: _rejectPendingTicket,
         onEdit: (ticket) {
-          final table = tables.where((item) => item.id == ticket.tableId).firstOrNull;
+          final table = tables
+              .where((item) => item.id == ticket.tableId)
+              .firstOrNull;
           if (table != null) {
             _openOrderScreen(table, editingTicket: ticket);
           }
@@ -937,14 +981,14 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex == 0
                 ? 'Floor Plan'
                 : _currentIndex == 1
-                    ? 'Catalog'
-                    : _currentIndex == 2
-                        ? 'Pending Tickets'
-                        : _currentIndex == 3
-                                ? 'Setup'
-                                : _currentIndex == 4
-                                    ? 'Cash Register'
-                                    : 'Notes',
+                ? 'Catalog'
+                : _currentIndex == 2
+                ? 'Pending Tickets'
+                : _currentIndex == 3
+                ? 'Setup'
+                : _currentIndex == 4
+                ? 'Cash Register'
+                : 'Notes',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
@@ -955,7 +999,9 @@ class _MainScreenState extends State<MainScreen> {
                 Icons.crop,
                 color: isSettingBoundsMode
                     ? AppColors.electricCyan
-                    : (hasSpaceBounds ? AppColors.emerald : AppColors.steelGrey),
+                    : (hasSpaceBounds
+                          ? AppColors.emerald
+                          : AppColors.steelGrey),
                 size: 24,
               ),
               tooltip: 'Set Floor Plan Bounds',
@@ -1016,7 +1062,9 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(
                 isMapEditMode ? Icons.lock_open : Icons.lock,
-                color: isMapEditMode ? AppColors.coralRed : AppColors.frostWhite,
+                color: isMapEditMode
+                    ? AppColors.coralRed
+                    : AppColors.frostWhite,
                 size: 26,
               ),
               tooltip: 'Lock / Unlock Tables',
@@ -1032,11 +1080,11 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(right: 8.0, left: 2.0),
             child: ElevatedButton.icon(
               icon: const Icon(Icons.sync, size: 16),
-              label: const Text('Sync',
-                  style: TextStyle(fontSize: 12)),
+              label: const Text('Sync', style: TextStyle(fontSize: 12)),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.amber,
-                  padding: const EdgeInsets.symmetric(horizontal: 8)),
+                backgroundColor: AppColors.amber,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+              ),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
@@ -1045,13 +1093,19 @@ class _MainScreenState extends State<MainScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const ListTile(
-                          title: Text('Wi-Fi Sync',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                          title: Text(
+                            'Wi-Fi Sync',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
                         ),
                         ListTile(
-                          leading: const Icon(Icons.wifi_tethering,
-                              color: AppColors.electricCyan),
+                          leading: const Icon(
+                            Icons.wifi_tethering,
+                            color: AppColors.electricCyan,
+                          ),
                           title: const Text('Send (Become Server)'),
                           onTap: () {
                             Navigator.pop(ctx);
@@ -1065,39 +1119,46 @@ class _MainScreenState extends State<MainScreen> {
                           },
                         ),
                         ListTile(
-                          leading: const Icon(Icons.qr_code_scanner,
-                              color: AppColors.emerald),
+                          leading: const Icon(
+                            Icons.qr_code_scanner,
+                            color: AppColors.emerald,
+                          ),
                           title: const Text('Receive (Scan QR)'),
                           onTap: () {
                             Navigator.pop(ctx);
                             _wifiSyncService.scanToSync(
                               context: context,
                               onSyncSuccess:
-                                  (syncedSpaces, syncedTables, syncedMenu,
-                                      syncedPendingTickets) {
-                                setState(() {
-                                  spaces = syncedSpaces;
-                                  tables = syncedTables;
-                                  menu = syncedMenu;
-                                  pendingTickets = syncedPendingTickets;
-                                  _sanitizeMergedTables();
+                                  (
+                                    syncedSpaces,
+                                    syncedTables,
+                                    syncedMenu,
+                                    syncedPendingTickets,
+                                  ) {
+                                    setState(() {
+                                      spaces = syncedSpaces;
+                                      tables = syncedTables;
+                                      menu = syncedMenu;
+                                      pendingTickets = syncedPendingTickets;
+                                      _sanitizeMergedTables();
 
-                                  if (spaces.isNotEmpty) {
-                                    activeSpaceId = spaces.first.id;
-                                    setupSelectedSpace = spaces.first.id;
-                                  }
-                                  if (menu.isNotEmpty) {
-                                    setupSelectedCat = menu.first.id;
-                                  }
+                                      if (spaces.isNotEmpty) {
+                                        activeSpaceId = spaces.first.id;
+                                        setupSelectedSpace = spaces.first.id;
+                                      }
+                                      if (menu.isNotEmpty) {
+                                        setupSelectedCat = menu.first.id;
+                                      }
 
-                                  isSettingBoundsMode = false;
-                                  isMapEditMode = false;
-                                  isBoundsLocked =
-                                      _activeSpace?.hasBounds ?? false;
-                                  _mapTransformCtrl.value = Matrix4.identity();
-                                });
-                                _saveData();
-                              },
+                                      isSettingBoundsMode = false;
+                                      isMapEditMode = false;
+                                      isBoundsLocked =
+                                          _activeSpace?.hasBounds ?? false;
+                                      _mapTransformCtrl.value =
+                                          Matrix4.identity();
+                                    });
+                                    _saveData();
+                                  },
                             );
                           },
                         ),
@@ -1133,33 +1194,39 @@ class _MainScreenState extends State<MainScreen> {
         onDestinationSelected: (i) => setState(() => _currentIndex = i),
         destinations: [
           NavigationDestination(
-              icon: Icon(Icons.map_outlined),
-              selectedIcon: Icon(Icons.map),
-              label: 'Floor Plan'),
+            icon: Icon(Icons.map_outlined),
+            selectedIcon: Icon(Icons.map),
+            label: 'Floor Plan',
+          ),
           NavigationDestination(
-              icon: Icon(Icons.menu_book_outlined),
-              selectedIcon: Icon(Icons.menu_book),
-              label: 'Catalog'),
+            icon: Icon(Icons.menu_book_outlined),
+            selectedIcon: Icon(Icons.menu_book),
+            label: 'Catalog',
+          ),
           NavigationDestination(
-              icon: Badge(
-                  isLabelVisible: false, child: Icon(Icons.receipt_long)),
-              selectedIcon: Badge(
-                  label: Text('${pendingTickets.length}'),
-                  isLabelVisible: pendingTickets.isNotEmpty,
-                  child: Icon(Icons.receipt_long)),
-              label: 'Pending'),
+            icon: Badge(isLabelVisible: false, child: Icon(Icons.receipt_long)),
+            selectedIcon: Badge(
+              label: Text('${pendingTickets.length}'),
+              isLabelVisible: pendingTickets.isNotEmpty,
+              child: Icon(Icons.receipt_long),
+            ),
+            label: 'Pending',
+          ),
           NavigationDestination(
-              icon: Icon(Icons.tune_rounded),
-              selectedIcon: Icon(Icons.tune_rounded),
-              label: 'Setup'),
+            icon: Icon(Icons.tune_rounded),
+            selectedIcon: Icon(Icons.tune_rounded),
+            label: 'Setup',
+          ),
           NavigationDestination(
-              icon: Icon(Icons.point_of_sale_outlined),
-              selectedIcon: Icon(Icons.point_of_sale),
-              label: 'Cash Register'),
+            icon: Icon(Icons.point_of_sale_outlined),
+            selectedIcon: Icon(Icons.point_of_sale),
+            label: 'Cash Register',
+          ),
           NavigationDestination(
-              icon: Icon(Icons.note_alt_outlined),
-              selectedIcon: Icon(Icons.note_alt),
-              label: 'Notes'),
+            icon: Icon(Icons.note_alt_outlined),
+            selectedIcon: Icon(Icons.note_alt),
+            label: 'Notes',
+          ),
         ],
       ),
     );
